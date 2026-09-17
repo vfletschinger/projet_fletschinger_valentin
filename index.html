@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <section id="signup-section" class="card">
+            <h1>Créer un compte</h1>
+            <p class="subtitle">Tous les champs sont obligatoires.</p>
+
+            <div id="error-box" class="message message-error" role="alert" hidden></div>
+
+            <form id="signup-form" novalidate>
+                <fieldset>
+                    <legend>Identifiants</legend>
+
+                    <div class="field">
+                        <label for="login">Login</label>
+                        <input type="text" id="login" name="login" autocomplete="username" required>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" id="password" name="password" autocomplete="new-password" required>
+                        </div>
+                        <div class="field">
+                            <label for="confirmPassword">Confirmation du mot de passe</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password" required>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Informations personnelles</legend>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="lastName">Nom</label>
+                            <input type="text" id="lastName" name="lastName" autocomplete="family-name" required>
+                        </div>
+                        <div class="field">
+                            <label for="firstName">Prénom</label>
+                            <input type="text" id="firstName" name="firstName" autocomplete="given-name" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="address">Adresse</label>
+                        <input type="text" id="address" name="address" autocomplete="street-address" required>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" autocomplete="email" required>
+                        </div>
+                        <div class="field">
+                            <label for="phone">Téléphone</label>
+                            <input type="text" id="phone" name="phone" autocomplete="tel" inputmode="tel" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="birthDate">Date de naissance</label>
+                        <input type="date" id="birthDate" name="birthDate" autocomplete="bday" required>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn">S'inscrire</button>
+            </form>
+        </section>
+
+        <section id="summary-section" class="card" hidden>
+            <div class="message message-success">Inscription réussie !</div>
+            <h1>Récapitulatif</h1>
+
+            <dl class="summary">
+                <dt>Login</dt>
+                <dd data-field="login"></dd>
+                <dt>Nom</dt>
+                <dd data-field="lastName"></dd>
+                <dt>Prénom</dt>
+                <dd data-field="firstName"></dd>
+                <dt>Adresse</dt>
+                <dd data-field="address"></dd>
+                <dt>Email</dt>
+                <dd data-field="email"></dd>
+                <dt>Téléphone</dt>
+                <dd data-field="phone"></dd>
+                <dt>Date de naissance</dt>
+                <dd data-field="birthDate"></dd>
+            </dl>
+
+            <button type="button" id="back-button" class="btn btn-secondary">Modifier mes informations</button>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
