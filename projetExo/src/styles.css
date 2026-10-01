@@ -1,0 +1,43 @@
+/* Design tokens partagés par toute l'application */
+:root {
+  --ink: #12141c;
+  --ink-soft: #2a2e3b;
+  --paper: #ffffff;
+  --canvas: #eef0f4;
+  --line: #d9dce4;
+  --muted: #6b7083;
+  --text: #1b1e27;
+  --accent: #e4572e;
+  --accent-dark: #c4421d;
+  --danger: #c62e3d;
+  --success: #1f8a5b;
+
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius: 12px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+}
