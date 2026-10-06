@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "projetExo": {
+    "front": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -56,10 +56,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "projetExo:build:production"
+              "buildTarget": "front:build:production"
             },
             "development": {
-              "buildTarget": "projetExo:build:development"
+              "buildTarget": "front:build:development"
             }
           },
           "defaultConfiguration": "development"
