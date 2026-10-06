@@ -1,0 +1,152 @@
+<main class="shell">
+  <aside class="showcase">
+    <p class="brand"><span class="brand-mark"></span> Atelier</p>
+
+    <div class="showcase-copy">
+      <h1>Votre place<br /><em>vous attend.</em></h1>
+      <p>Créez votre compte en quelques secondes. Votre carte se remplit au fil de la saisie.</p>
+    </div>
+
+    <div class="member-card" aria-hidden="true">
+      <div class="card-top">
+        <span class="avatar">{{ initials }}</span>
+        <span class="card-label">Carte membre</span>
+      </div>
+      <p class="card-name">
+        {{ user.firstName || 'Prénom' }} {{ user.lastName || 'Nom' }}
+      </p>
+      <dl class="card-meta">
+        <div>
+          <dt>Identifiant</dt>
+          <dd>{{ user.login ? '@' + user.login : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Email</dt>
+          <dd>{{ user.email || '—' }}</dd>
+        </div>
+      </dl>
+    </div>
+  </aside>
+
+  <section class="panel">
+    @if (registeredUser) {
+      <div class="success" role="status">
+        <span class="success-icon" aria-hidden="true">✓</span>
+        <h2>Bienvenue, {{ registeredUser.firstName }} !</h2>
+        <p class="lead">Votre compte a bien été créé.</p>
+
+        <dl class="recap">
+          <div><dt>Nom</dt><dd>{{ registeredUser.lastName }}</dd></div>
+          <div><dt>Prénom</dt><dd>{{ registeredUser.firstName }}</dd></div>
+          <div><dt>Login</dt><dd>{{ registeredUser.login }}</dd></div>
+          <div><dt>Email</dt><dd>{{ registeredUser.email }}</dd></div>
+        </dl>
+
+        <button type="button" class="btn-primary" (click)="restart()">Créer un autre compte</button>
+      </div>
+    } @else {
+      <header class="panel-head">
+        <h2>Inscription</h2>
+        <p class="lead">Tous les champs sont obligatoires.</p>
+      </header>
+
+      <div class="progress" aria-hidden="true">
+        @for (step of steps; track step) {
+          <span class="segment" [class.done]="step <= validCount(form)"></span>
+        }
+      </div>
+
+      <form #form="ngForm" (ngSubmit)="onSubmit(form)" novalidate>
+        <div class="row">
+          <div class="field" [class.invalid]="lastName.invalid && (lastName.touched || form.submitted)">
+            <label for="lastName">Nom</label>
+            <input id="lastName" type="text" name="lastName" autocomplete="family-name"
+                   [(ngModel)]="user.lastName" #lastName="ngModel" required
+                   aria-describedby="lastName-error" [attr.aria-invalid]="lastName.invalid && lastName.touched" />
+            @if (lastName.invalid && (lastName.touched || form.submitted)) {
+              <small id="lastName-error" class="error">Le nom est requis.</small>
+            }
+          </div>
+
+          <div class="field" [class.invalid]="firstName.invalid && (firstName.touched || form.submitted)">
+            <label for="firstName">Prénom</label>
+            <input id="firstName" type="text" name="firstName" autocomplete="given-name"
+                   [(ngModel)]="user.firstName" #firstName="ngModel" required
+                   aria-describedby="firstName-error" [attr.aria-invalid]="firstName.invalid && firstName.touched" />
+            @if (firstName.invalid && (firstName.touched || form.submitted)) {
+              <small id="firstName-error" class="error">Le prénom est requis.</small>
+            }
+          </div>
+        </div>
+
+        <div class="field" [class.invalid]="email.invalid && (email.touched || form.submitted)">
+          <label for="email">Email</label>
+          <input id="email" type="email" name="email" autocomplete="email"
+                 [(ngModel)]="user.email" #email="ngModel" required email
+                 aria-describedby="email-error" [attr.aria-invalid]="email.invalid && email.touched" />
+          @if (email.invalid && (email.touched || form.submitted)) {
+            <small id="email-error" class="error">
+              @if (email.hasError('required')) { L'email est requis. } @else { Format d'email invalide. }
+            </small>
+          }
+        </div>
+
+        <div class="field" [class.invalid]="login.invalid && (login.touched || form.submitted)">
+          <label for="login">Login</label>
+          <input id="login" type="text" name="login" autocomplete="username"
+                 [(ngModel)]="user.login" #login="ngModel" required
+                 aria-describedby="login-error" [attr.aria-invalid]="login.invalid && login.touched" />
+          @if (login.invalid && (login.touched || form.submitted)) {
+            <small id="login-error" class="error">Le login est requis.</small>
+          }
+        </div>
+
+        <div class="row">
+          <div class="field" [class.invalid]="password.invalid && (password.touched || form.submitted)">
+            <label for="password">Mot de passe</label>
+            <div class="input-wrap">
+              <input id="password" [type]="showPassword ? 'text' : 'password'" name="password"
+                     autocomplete="new-password"
+                     [(ngModel)]="user.password" #password="ngModel" required
+                     aria-describedby="password-error" [attr.aria-invalid]="password.invalid && password.touched" />
+              <button type="button" class="reveal" (click)="togglePassword()"
+                      [attr.aria-pressed]="showPassword"
+                      [attr.aria-label]="showPassword ? 'Masquer les mots de passe' : 'Afficher les mots de passe'">
+                {{ showPassword ? 'Masquer' : 'Voir' }}
+              </button>
+            </div>
+            @if (password.invalid && (password.touched || form.submitted)) {
+              <small id="password-error" class="error">Le mot de passe est requis.</small>
+            }
+          </div>
+
+          <div class="field" [class.invalid]="confirmPassword.invalid && (confirmPassword.touched || form.submitted)">
+            <label for="confirmPassword">Confirmation</label>
+            <input id="confirmPassword" [type]="showPassword ? 'text' : 'password'" name="confirmPassword"
+                   autocomplete="new-password"
+                   [(ngModel)]="user.confirmPassword" #confirmPassword="ngModel" required
+                   [appPasswordMatch]="user.password"
+                   aria-describedby="confirmPassword-error"
+                   [attr.aria-invalid]="confirmPassword.invalid && confirmPassword.touched" />
+            @if (confirmPassword.invalid && (confirmPassword.touched || form.submitted)) {
+              <small id="confirmPassword-error" class="error">
+                @if (confirmPassword.hasError('required')) {
+                  La confirmation est requise.
+                } @else {
+                  Les mots de passe ne correspondent pas.
+                }
+              </small>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="!form.valid">
+          S'inscrire
+        </button>
+        @if (!form.valid) {
+          <p class="hint">Complétez les {{ steps.length - validCount(form) }} champ(s) restant(s) pour continuer.</p>
+        }
+      </form>
+    }
+  </section>
+</main>
