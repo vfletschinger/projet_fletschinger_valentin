@@ -1,0 +1,34 @@
+<section class="recap">
+  <header class="recap-head">
+    <p class="badge">{{ pollution.type }}</p>
+    <h2>{{ pollution.title }}</h2>
+    <p class="lead">Déclaration enregistrée.</p>
+  </header>
+
+  @if (pollution.photoUrl) {
+    <img class="photo" [src]="pollution.photoUrl" [alt]="'Photo : ' + pollution.title" />
+  }
+
+  <dl class="details">
+    <div class="full">
+      <dt>Description</dt>
+      <dd>{{ pollution.description }}</dd>
+    </div>
+    <div>
+      <dt>Date de l'observation</dt>
+      <dd>{{ pollution.observedAt | date: 'dd/MM/yyyy' }}</dd>
+    </div>
+    <div>
+      <dt>Lieu</dt>
+      <dd>{{ pollution.place }}</dd>
+    </div>
+    <div>
+      <dt>Latitude</dt>
+      <dd>{{ pollution.latitude }}</dd>
+    </div>
+    <div>
+      <dt>Longitude</dt>
+      <dd>{{ pollution.longitude }}</dd>
+    </div>
+  </dl>
+</section>

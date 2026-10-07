@@ -1,0 +1,94 @@
+.page {
+  display: grid;
+  gap: 24px;
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+h1 {
+  margin: 0;
+  font: 400 2.4rem / 1.1 var(--font-display);
+}
+.lead {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+form {
+  display: grid;
+  gap: 18px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--text);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+textarea {
+  resize: vertical;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 4px #12141c14;
+}
+.field.invalid input,
+.field.invalid select,
+.field.invalid textarea {
+  border-color: var(--danger);
+}
+.error {
+  color: var(--danger);
+  font-size: 0.8rem;
+}
+
+.btn-primary {
+  padding: 14px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover {
+  background: var(--accent);
+}
+.btn-primary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding: 32px 16px;
+  }
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
