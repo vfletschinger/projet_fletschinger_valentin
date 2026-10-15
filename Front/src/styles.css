@@ -38,6 +38,117 @@ body {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
+}
+
+/* ---------- Titres et listes de description ---------- */
+h1,
+h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.lead {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+dt {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+dd {
+  margin: 4px 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Primitives de formulaire ---------- */
+form {
+  display: grid;
+  gap: 18px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--text);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+textarea {
+  resize: vertical;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 4px #12141c14;
+}
+.field.invalid input,
+.field.invalid select,
+.field.invalid textarea {
+  border-color: var(--danger);
+}
+.error {
+  color: var(--danger);
+  font-size: 0.8rem;
+}
+
+.btn-primary {
+  padding: 14px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+}
+.btn-primary:hover:enabled {
+  background: var(--accent);
+}
+.btn-primary:active:enabled {
+  transform: translateY(1px);
+}
+.btn-primary:disabled {
+  background: #b9bdca;
+  cursor: not-allowed;
+}
+.btn-primary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
 }

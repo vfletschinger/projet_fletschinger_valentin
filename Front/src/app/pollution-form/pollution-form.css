@@ -1,0 +1,17 @@
+.page {
+  display: grid;
+  gap: 24px;
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+h1 {
+  font-size: 2.4rem;
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding: 32px 16px;
+  }
+}

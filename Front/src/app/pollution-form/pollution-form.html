@@ -1,0 +1,115 @@
+<main class="page">
+  @if (declaration) {
+    <app-pollution-recap [pollution]="declaration" />
+    <button type="button" class="btn-primary" (click)="restart()">Nouvelle déclaration</button>
+  } @else {
+    <header class="page-head">
+      <h1>Déclarer une pollution</h1>
+      <p class="lead">Les champs marqués d'un astérisque sont obligatoires.</p>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field" [class.invalid]="controls.title.touched && controls.title.invalid">
+        <label for="title">Titre de la pollution *</label>
+        <input id="title" type="text" formControlName="title" />
+        @if (controls.title.touched && controls.title.invalid) {
+          <small class="error">Le titre est requis.</small>
+        }
+      </div>
+
+      <div class="field" [class.invalid]="controls.type.touched && controls.type.invalid">
+        <label for="type">Type de pollution *</label>
+        <select id="type" formControlName="type">
+          <option value="" disabled>Sélectionnez un type</option>
+          @for (type of pollutionTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+        @if (controls.type.touched && controls.type.invalid) {
+          <small class="error">Le type est requis.</small>
+        }
+      </div>
+
+      <div
+        class="field"
+        [class.invalid]="controls.description.touched && controls.description.invalid"
+      >
+        <label for="description">Description *</label>
+        <textarea id="description" rows="4" formControlName="description"></textarea>
+        @if (controls.description.touched && controls.description.invalid) {
+          <small class="error">La description est requise.</small>
+        }
+      </div>
+
+      <div class="row">
+        <div
+          class="field"
+          [class.invalid]="controls.observedAt.touched && controls.observedAt.invalid"
+        >
+          <label for="observedAt">Date de l'observation *</label>
+          <input id="observedAt" type="date" formControlName="observedAt" />
+          @if (controls.observedAt.touched && controls.observedAt.invalid) {
+            <small class="error">
+              @if (controls.observedAt.hasError('required')) {
+                La date est requise.
+              } @else {
+                La date ne peut pas être dans le futur.
+              }
+            </small>
+          }
+        </div>
+
+        <div class="field" [class.invalid]="controls.place.touched && controls.place.invalid">
+          <label for="place">Lieu *</label>
+          <input id="place" type="text" formControlName="place" />
+          @if (controls.place.touched && controls.place.invalid) {
+            <small class="error">Le lieu est requis.</small>
+          }
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field" [class.invalid]="controls.latitude.touched && controls.latitude.invalid">
+          <label for="latitude">Latitude *</label>
+          <input id="latitude" type="number" step="any" formControlName="latitude" />
+          @if (controls.latitude.touched && controls.latitude.invalid) {
+            <small class="error">
+              @if (controls.latitude.hasError('required')) {
+                La latitude est requise (nombre).
+              } @else {
+                La latitude doit être comprise entre -90 et 90.
+              }
+            </small>
+          }
+        </div>
+
+        <div
+          class="field"
+          [class.invalid]="controls.longitude.touched && controls.longitude.invalid"
+        >
+          <label for="longitude">Longitude *</label>
+          <input id="longitude" type="number" step="any" formControlName="longitude" />
+          @if (controls.longitude.touched && controls.longitude.invalid) {
+            <small class="error">
+              @if (controls.longitude.hasError('required')) {
+                La longitude est requise (nombre).
+              } @else {
+                La longitude doit être comprise entre -180 et 180.
+              }
+            </small>
+          }
+        </div>
+      </div>
+
+      <div class="field" [class.invalid]="controls.photoUrl.touched && controls.photoUrl.invalid">
+        <label for="photoUrl">Photo (URL)</label>
+        <input id="photoUrl" type="url" formControlName="photoUrl" placeholder="https://..." />
+        @if (controls.photoUrl.touched && controls.photoUrl.invalid) {
+          <small class="error">L'URL doit commencer par http:// ou https://.</small>
+        }
+      </div>
+
+      <button type="submit" class="btn-primary">Déclarer</button>
+    </form>
+  }
+</main>
