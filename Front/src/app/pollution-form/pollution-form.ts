@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution';
+import { notBlank } from '../shared/not-blank';
 import { notInFuture } from '../shared/not-in-future';
 import { PollutionRecap } from '../pollution-recap/pollution-recap';
 
@@ -17,7 +18,7 @@ export class PollutionForm {
   protected readonly form = new FormGroup({
     title: new FormControl<string>('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, notBlank],
     }),
     type: new FormControl<PollutionType | ''>('', {
       nonNullable: true,
@@ -25,7 +26,7 @@ export class PollutionForm {
     }),
     description: new FormControl<string>('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, notBlank],
     }),
     observedAt: new FormControl<string>('', {
       nonNullable: true,
@@ -33,7 +34,7 @@ export class PollutionForm {
     }),
     place: new FormControl<string>('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, notBlank],
     }),
     latitude: new FormControl<number | null>(null, [
       Validators.required,
@@ -56,12 +57,23 @@ export class PollutionForm {
   protected declaration: Pollution | null = null;
 
   protected onSubmit(): void {
+    this.trimTextControls();
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
     this.declaration = this.form.getRawValue();
+  }
+
+  /** Normalise la saisie avant validation : une valeur blanche devient vide, donc requise. */
+  private trimTextControls(): void {
+    const { title, description, place, photoUrl } = this.controls;
+
+    for (const control of [title, description, place, photoUrl]) {
+      control.setValue(control.value.trim());
+    }
   }
 
   protected restart(): void {

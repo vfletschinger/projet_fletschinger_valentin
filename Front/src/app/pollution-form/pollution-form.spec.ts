@@ -67,6 +67,32 @@ describe('PollutionForm', () => {
     expect(el.textContent).toContain('La date ne peut pas être dans le futur.');
   });
 
+  it("refuse un champ texte rempli uniquement d'espaces", async () => {
+    await fillAll();
+    await fill('title', '   ');
+
+    expect(el.textContent).toContain('Le titre est requis.');
+
+    submitButton().click();
+    fixture.detectChanges();
+
+    expect(el.querySelector('form')).not.toBeNull();
+  });
+
+  it('retire les espaces superflus avant de transmettre la déclaration', async () => {
+    await fillAll();
+    await fill('title', '  Bidons abandonnés  ');
+    await fill('place', '  Quai de Seine  ');
+
+    submitButton().click();
+    fixture.detectChanges();
+
+    const headings = el.querySelector('h2')!.textContent!;
+    expect(headings).toBe('Bidons abandonnés');
+    expect(el.textContent).toContain('Quai de Seine');
+    expect(el.textContent).not.toContain('  Quai de Seine  ');
+  });
+
   it('masque le formulaire et affiche le récapitulatif quand tout est valide', async () => {
     await fillAll();
     submitButton().click();

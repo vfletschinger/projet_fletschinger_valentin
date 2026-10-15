@@ -19,12 +19,11 @@
   text-transform: uppercase;
 }
 h2 {
-  margin: 10px 0 0;
-  font: 400 2.1rem / 1.1 var(--font-display);
+  margin-top: 10px;
+  font-size: 2.1rem;
   overflow-wrap: anywhere;
 }
 .lead {
-  margin: 6px 0 0;
   color: var(--success);
   font-weight: 600;
 }
@@ -45,16 +44,7 @@ h2 {
 .details .full {
   grid-column: 1 / -1;
 }
-dt {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-dd {
-  margin: 4px 0 0;
-  font-weight: 600;
-  overflow-wrap: anywhere;
+.details dd {
   white-space: pre-line;
 }
 

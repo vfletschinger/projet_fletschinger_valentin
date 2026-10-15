@@ -28,8 +28,9 @@
   background: var(--accent);
 }
 h1 {
-  margin: 0 0 16px;
-  font: 400 clamp(2.6rem, 4.5vw, 3.8rem) / 1.02 var(--font-display);
+  margin-bottom: 16px;
+  font-size: clamp(2.6rem, 4.5vw, 3.8rem);
+  line-height: 1.02;
 }
 h1 em {
   color: var(--accent);
@@ -80,17 +81,6 @@ h1 em {
   gap: 10px;
   margin: 0;
 }
-dt {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-dd {
-  margin: 2px 0 0;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
 
 /* ---------- Panneau formulaire ---------- */
 .panel {
@@ -102,12 +92,7 @@ dd {
   padding: 48px 24px;
 }
 h2 {
-  margin: 0;
-  font: 400 2.4rem / 1.1 var(--font-display);
-}
-.lead {
-  margin: 6px 0 0;
-  color: var(--muted);
+  font-size: 2.4rem;
 }
 .progress {
   display: flex;
@@ -125,44 +110,8 @@ h2 {
   background: var(--accent);
 }
 
-form {
-  display: grid;
-  gap: 18px;
-}
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-.field {
-  display: grid;
-  gap: 6px;
-  align-content: start;
-}
-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-input {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--paper);
-  color: var(--text);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-input:focus {
-  outline: none;
-  border-color: var(--ink);
-  box-shadow: 0 0 0 4px #12141c14;
-}
-.field.invalid input {
-  border-color: var(--danger);
-}
-.error {
-  color: var(--danger);
-  font-size: 0.8rem;
+.btn-primary {
+  margin-top: 8px;
 }
 .input-wrap {
   position: relative;
@@ -184,29 +133,6 @@ input:focus {
   font-weight: 600;
   cursor: pointer;
 }
-
-.btn-primary {
-  margin-top: 8px;
-  padding: 14px;
-  border: 0;
-  border-radius: var(--radius);
-  background: var(--ink);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-}
-.btn-primary:hover:enabled {
-  background: var(--accent);
-}
-.btn-primary:active:enabled {
-  transform: translateY(1px);
-}
-.btn-primary:disabled {
-  background: #b9bdca;
-  cursor: not-allowed;
-}
-.btn-primary:focus-visible,
 .reveal:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
@@ -256,7 +182,6 @@ input:focus {
   }
 }
 @media (max-width: 520px) {
-  .row,
   .recap {
     grid-template-columns: 1fr;
   }
