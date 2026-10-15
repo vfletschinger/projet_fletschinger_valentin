@@ -29,17 +29,19 @@
   </aside>
 
   <section class="panel">
-    @if (registeredUser) {
+    @if (registeredUser(); as account) {
       <div class="success" role="status">
         <span class="success-icon" aria-hidden="true">✓</span>
-        <h2>Bienvenue, {{ registeredUser.firstName }} !</h2>
+        <h2>Bienvenue, {{ account.firstName }} !</h2>
         <p class="lead">Votre compte a bien été créé.</p>
 
         <dl class="recap">
-          <div><dt>Nom</dt><dd>{{ registeredUser.lastName }}</dd></div>
-          <div><dt>Prénom</dt><dd>{{ registeredUser.firstName }}</dd></div>
-          <div><dt>Login</dt><dd>{{ registeredUser.login }}</dd></div>
-          <div><dt>Email</dt><dd>{{ registeredUser.email }}</dd></div>
+          <div><dt>Nom</dt><dd>{{ account.lastName }}</dd></div>
+          <div><dt>Prénom</dt><dd>{{ account.firstName }}</dd></div>
+          <div><dt>Login</dt><dd>{{ account.login }}</dd></div>
+          <div><dt>Email</dt><dd>{{ account.email }}</dd></div>
+          <div><dt>Identifiant serveur</dt><dd>{{ account.id }}</dd></div>
+          <div><dt>Créé le</dt><dd>{{ account.createdAt | date: 'dd/MM/yyyy à HH:mm' }}</dd></div>
         </dl>
 
         <button type="button" class="btn-primary" (click)="restart()">Créer un autre compte</button>
@@ -140,8 +142,12 @@
           </div>
         </div>
 
-        <button type="submit" class="btn-primary" [disabled]="!form.valid">
-          S'inscrire
+        @if (serverError(); as message) {
+          <p class="server-error" role="alert">{{ message }}</p>
+        }
+
+        <button type="submit" class="btn-primary" [disabled]="!form.valid || submitting()">
+          {{ submitting() ? 'Inscription en cours…' : "S'inscrire" }}
         </button>
         @if (!form.valid) {
           <p class="hint">Complétez les {{ steps.length - validCount(form) }} champ(s) restant(s) pour continuer.</p>
