@@ -6,8 +6,8 @@ Le front Angular se trouve dans `../Front`.
 
 ## Contrat attendu par le front
 
-Tant que ce dossier est vide, l'intercepteur `Front/src/app/services/api-mock.ts`
-répond à la place du serveur (activé par `environment.useApiMock`). Le backend
+Tant que ce dossier est vide, les intercepteurs `Front/src/app/services/*-mock.ts`
+répondent à la place du serveur (activé par `environment.useApiMock`). Le backend
 devra respecter le même contrat pour que le front fonctionne sans modification.
 
 ### URL de base
@@ -15,7 +15,10 @@ devra respecter le même contrat pour que le front fonctionne sans modification.
 Configurée côté front dans `Front/src/environments/` :
 
 - `ng serve` → `http://localhost:3000/api` (mock actif)
-- build de production → `/api` (même origine, appels réels)
+- build de production → `/api` (mock actif lui aussi, faute d'API déployée)
+
+Une fois l'API en ligne, renseigner son URL dans `environment.ts` et passer
+`useApiMock` à `false`.
 
 ### Endpoints
 
