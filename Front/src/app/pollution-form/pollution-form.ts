@@ -1,18 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution';
+import { Router, RouterLink } from '@angular/router';
+import { POLLUTION_TYPES, PollutionType } from '../models/pollution';
+import { PollutionApi } from '../services/pollution-api';
 import { notBlank } from '../shared/not-blank';
 import { notInFuture } from '../shared/not-in-future';
-import { PollutionRecap } from '../pollution-recap/pollution-recap';
 
 @Component({
   selector: 'app-pollution-form',
   standalone: true,
-  imports: [ReactiveFormsModule, PollutionRecap],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './pollution-form.html',
-  styleUrl: './pollution-form.css',
 })
-export class PollutionForm {
+export class PollutionForm implements OnInit {
+  private readonly pollutionApi = inject(PollutionApi);
+  private readonly router = inject(Router);
+
+  /** Paramètre `:id` de la route de modification ; absent en création. */
+  @Input() id?: string;
+
   protected readonly pollutionTypes = POLLUTION_TYPES;
 
   protected readonly form = new FormGroup({
@@ -54,9 +60,25 @@ export class PollutionForm {
 
   protected readonly controls = this.form.controls;
 
-  protected declaration: Pollution | null = null;
+  protected readonly submitting = signal(false);
+  protected readonly serverError = signal<string | null>(null);
+
+  ngOnInit(): void {
+    if (!this.id) {
+      return;
+    }
+
+    this.pollutionApi.getById(this.id).subscribe({
+      next: (pollution) => this.form.patchValue(pollution),
+      error: (error: Error) => this.serverError.set(error.message),
+    });
+  }
 
   protected onSubmit(): void {
+    if (this.submitting()) {
+      return;
+    }
+
     this.trimTextControls();
 
     if (this.form.invalid) {
@@ -64,7 +86,21 @@ export class PollutionForm {
       return;
     }
 
-    this.declaration = this.form.getRawValue();
+    const draft = this.form.getRawValue();
+    const request = this.id
+      ? this.pollutionApi.update(this.id, draft)
+      : this.pollutionApi.create(draft);
+
+    this.submitting.set(true);
+    this.serverError.set(null);
+
+    request.subscribe({
+      next: (saved) => this.router.navigate(['/pollutions', saved.id]),
+      error: (error: Error) => {
+        this.submitting.set(false);
+        this.serverError.set(error.message);
+      },
+    });
   }
 
   /** Normalise la saisie avant validation : une valeur blanche devient vide, donc requise. */
@@ -74,10 +110,5 @@ export class PollutionForm {
     for (const control of [title, description, place, photoUrl]) {
       control.setValue(control.value.trim());
     }
-  }
-
-  protected restart(): void {
-    this.declaration = null;
-    this.form.reset();
   }
 }
