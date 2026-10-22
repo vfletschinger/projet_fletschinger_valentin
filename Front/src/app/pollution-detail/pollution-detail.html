@@ -1,0 +1,18 @@
+<main class="page">
+  <a class="back" routerLink="/pollutions">← Retour à la liste</a>
+
+  @if (serverError(); as message) {
+    <p class="server-error" role="alert">{{ message }}</p>
+  }
+
+  @if (pollution(); as current) {
+    <app-pollution-recap [pollution]="current" />
+
+    <div class="actions">
+      <a class="btn-primary" [routerLink]="['/pollutions', current.id, 'modifier']">Modifier</a>
+      <button type="button" class="btn-danger" (click)="remove(current)">Supprimer</button>
+    </div>
+  } @else if (!serverError()) {
+    <p class="lead">Chargement de la pollution…</p>
+  }
+</main>

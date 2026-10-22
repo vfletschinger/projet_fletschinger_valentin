@@ -1,0 +1,66 @@
+<main class="page">
+  <header class="list-head">
+    <div>
+      <h1>Pollutions signalées</h1>
+      <p class="lead">Consultez, filtrez et gérez les déclarations.</p>
+    </div>
+    <a class="btn-primary" routerLink="/pollutions/nouvelle">Déclarer une pollution</a>
+  </header>
+
+  <form class="filters" role="search">
+    <div class="field">
+      <label for="search">Recherche</label>
+      <input id="search" type="search" name="search" placeholder="Titre ou lieu"
+             [(ngModel)]="search" />
+    </div>
+
+    <div class="field">
+      <label for="type">Type</label>
+      <select id="type" name="type" [(ngModel)]="type">
+        <option value="">Tous les types</option>
+        @for (pollutionType of pollutionTypes; track pollutionType) {
+          <option [value]="pollutionType">{{ pollutionType }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="since">Observée depuis le</label>
+      <input id="since" type="date" name="since" [(ngModel)]="since" />
+    </div>
+
+    <button type="button" class="reset" (click)="resetFilters()">Réinitialiser</button>
+  </form>
+
+  @if (serverError(); as message) {
+    <p class="server-error" role="alert">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <p class="lead">Chargement des pollutions…</p>
+  } @else {
+    <p class="count">
+      {{ filteredPollutions().length }} pollution(s) affichée(s) sur {{ pollutions().length }}
+    </p>
+
+    <ul class="items">
+      @for (pollution of filteredPollutions(); track pollution.id) {
+        <li class="item">
+          <a class="item-link" [routerLink]="['/pollutions', pollution.id]">
+            <span class="badge">{{ pollution.type }}</span>
+            <strong class="item-title">{{ pollution.title }}</strong>
+            <span class="item-meta">
+              {{ pollution.place }} · {{ pollution.observedAt | date: 'dd/MM/yyyy' }}
+            </span>
+          </a>
+          <button type="button" class="btn-danger" (click)="remove(pollution)"
+                  [attr.aria-label]="'Supprimer ' + pollution.title">
+            Supprimer
+          </button>
+        </li>
+      } @empty {
+        <li class="empty">Aucune pollution ne correspond à ces critères.</li>
+      }
+    </ul>
+  }
+</main>
