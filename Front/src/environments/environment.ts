@@ -3,5 +3,6 @@ import { Environment } from './environment.model';
 export const environment: Environment = {
   production: true,
   apiBaseUrl: '/api',
-  useApiMock: false,
+  // Pas encore d'API déployée : le front simulé répond aussi en production.
+  useApiMock: true,
 };

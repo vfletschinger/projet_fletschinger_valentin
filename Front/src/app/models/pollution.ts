@@ -10,6 +10,7 @@ export const POLLUTION_TYPES = [
 export type PollutionType = (typeof POLLUTION_TYPES)[number];
 
 export interface Pollution {
+  id: string;
   title: string;
   type: PollutionType | '';
   description: string;
@@ -19,3 +20,6 @@ export interface Pollution {
   longitude: number | null;
   photoUrl: string;
 }
+
+/** Corps envoyé à l'API en création comme en modification : l'id est fourni par le serveur. */
+export type PollutionRequest = Omit<Pollution, 'id'>;
