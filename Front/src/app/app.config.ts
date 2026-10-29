@@ -12,9 +12,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
-      withInterceptors(
-        environment.useApiMock ? [apiMockInterceptor, pollutionApiMockInterceptor] : [],
-      ),
+      withInterceptors([
+        ...(environment.useSignupApiMock ? [apiMockInterceptor] : []),
+        ...(environment.usePollutionApiMock ? [pollutionApiMockInterceptor] : []),
+      ]),
     ),
   ],
 };

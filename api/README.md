@@ -24,21 +24,22 @@ y insère un jeu de données d'exemple si elle est vide.
 
 ## Contrat attendu par le front
 
-Tant que ce dossier est vide, les intercepteurs `Front/src/app/services/*-mock.ts`
-répondent à la place du serveur (activé par `environment.useApiMock`). Le backend
-devra respecter le même contrat pour que le front fonctionne sans modification.
+Le front appelle cette API pour les pollutions. Les intercepteurs
+`Front/src/app/services/*-mock.ts` sont conservés et activables par ressource dans
+`Front/src/environments/` :
+
+- `usePollutionApiMock` : `false`, les pollutions viennent de cette API ;
+- `useSignupApiMock` : `true`, car `/auth/signup` n'existe pas encore ici.
 
 ### URL de base
 
-Configurée côté front dans `Front/src/environments/` :
-
-- `ng serve` → `http://localhost:3000/api` (mock actif)
-- build de production → `/api` (mock actif lui aussi, faute d'API déployée)
-
-Une fois l'API en ligne, renseigner son URL dans `environment.ts` et passer
-`useApiMock` à `false`.
+- `ng serve` → `http://localhost:3000/api` (lancer l'API avec `npm run dev`)
+- build de production → URL du service `pollution-api` sur Render
 
 ### Endpoints
+
+Seuls les `GET /pollutions` et `GET /pollutions/:id` sont implémentés pour l'instant ;
+les autres lignes décrivent ce que le front attend.
 
 | Méthode  | Route               | Corps            | Réponse                         |
 | -------- | ------------------- | ---------------- | ------------------------------- |
