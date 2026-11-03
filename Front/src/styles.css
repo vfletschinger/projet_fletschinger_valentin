@@ -170,6 +170,7 @@ textarea:focus {
 }
 
 .btn-primary,
+.btn-secondary,
 .btn-danger {
   padding: 14px 20px;
   border: 0;
@@ -183,6 +184,14 @@ textarea:focus {
   transition:
     background 0.2s,
     transform 0.1s;
+}
+.btn-secondary {
+  border: 1.5px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+.btn-secondary:hover {
+  border-color: var(--ink);
 }
 .btn-danger {
   border: 1.5px solid var(--danger);
@@ -206,9 +215,78 @@ textarea:focus {
   cursor: not-allowed;
 }
 .btn-primary:focus-visible,
+.btn-secondary:focus-visible,
 .btn-danger:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ---------- Listes (pollutions, utilisateurs) ---------- */
+.list-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+}
+
+.count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.items {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius);
+  background: var(--paper);
+  transition: border-color 0.2s;
+}
+.item:hover {
+  border-color: var(--line);
+}
+.item-link {
+  display: grid;
+  flex: 1;
+  gap: 6px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.item-title {
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+.item-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.item .btn-danger {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .item {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 @media (max-width: 560px) {

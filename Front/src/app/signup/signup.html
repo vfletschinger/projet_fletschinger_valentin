@@ -44,7 +44,10 @@
           <div><dt>Créé le</dt><dd>{{ account.createdAt | date: 'dd/MM/yyyy à HH:mm' }}</dd></div>
         </dl>
 
-        <button type="button" class="btn-primary" (click)="restart()">Créer un autre compte</button>
+        <div class="actions">
+          <button type="button" class="btn-primary" (click)="restart()">Créer un autre compte</button>
+          <a class="btn-secondary" routerLink="/connexion">Se connecter</a>
+        </div>
       </div>
     } @else {
       <header class="panel-head">

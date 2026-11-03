@@ -51,7 +51,7 @@ describe('pollutionApiMockInterceptor', () => {
 
   it('laisse passer les requêtes qui ne visent pas les pollutions', () => {
     const next = vi.fn();
-    const request = { method: 'POST', url: '/api/auth/signup', body: null } as never;
+    const request = { method: 'POST', url: '/api/users', body: null } as never;
 
     pollutionApiMockInterceptor(request, next);
 

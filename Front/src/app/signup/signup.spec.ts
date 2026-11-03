@@ -1,13 +1,14 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { environment } from '../../environments/environment';
-import { SignupResponse } from '../models/signup';
+import { User } from '../models/user';
 import { Signup } from './signup';
 
 describe('Signup', () => {
-  const url = `${environment.apiBaseUrl}/auth/signup`;
+  const url = `${environment.apiBaseUrl}/users`;
 
   let fixture: ComponentFixture<Signup>;
   let el: HTMLElement;
@@ -15,7 +16,7 @@ describe('Signup', () => {
 
   const submitButton = () => el.querySelector<HTMLButtonElement>('button[type="submit"]')!;
 
-  const createdAccount: SignupResponse = {
+  const createdAccount: User = {
     id: 'u-1',
     login: 'mdupont',
     lastName: 'Dupont',
@@ -46,7 +47,7 @@ describe('Signup', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Signup],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     http = TestBed.inject(HttpTestingController);

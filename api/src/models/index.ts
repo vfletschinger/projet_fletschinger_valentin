@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import definePollutions, { PollutionModel } from "./pollutions.model";
+import defineUsers, { UserModel } from "./users.model";
 
 // Render injecte DATABASE_URL (cf. render.yaml) ; en local, la renseigner dans api/.env
 const connectionUrl = process.env.DATABASE_URL;
@@ -31,12 +32,14 @@ export interface Database {
   Sequelize: typeof Sequelize;
   sequelize: Sequelize;
   pollutions: PollutionModel;
+  users: UserModel;
 }
 
 export const db: Database = {
   Sequelize,
   sequelize,
-  pollutions: definePollutions(sequelize)
+  pollutions: definePollutions(sequelize),
+  users: defineUsers(sequelize)
 };
 
 export default db;

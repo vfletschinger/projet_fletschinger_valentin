@@ -1,1 +1,34 @@
+<header class="topbar">
+  <nav class="nav" aria-label="Navigation principale">
+    <a class="brand" routerLink="/pollutions"><span class="brand-mark"></span> Pollutions</a>
+
+    <ul class="links">
+      <li>
+        <a class="nav-link" routerLink="/pollutions" routerLinkActive="active" ariaCurrentWhenActive="page">
+          Signalements
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" routerLink="/utilisateurs" routerLinkActive="active" ariaCurrentWhenActive="page">
+          Utilisateurs
+        </a>
+      </li>
+    </ul>
+
+    <div class="account">
+      @if (auth.user(); as user) {
+        <span class="greeting">Bonjour, {{ user.firstName }}</span>
+        <button type="button" class="nav-link" (click)="logout()">Se déconnecter</button>
+      } @else {
+        <a class="nav-link" routerLink="/connexion" routerLinkActive="active" ariaCurrentWhenActive="page">
+          Connexion
+        </a>
+        <a class="nav-link" routerLink="/inscription" routerLinkActive="active" ariaCurrentWhenActive="page">
+          Inscription
+        </a>
+      }
+    </div>
+  </nav>
+</header>
+
 <router-outlet />

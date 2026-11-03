@@ -1,8 +1,6 @@
-import { HttpErrorResponse, HttpInterceptorFn, HttpResponse } from '@angular/common/http';
-import { Observable, delay, of, throwError } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { Pollution, PollutionRequest } from '../models/pollution';
-
-const LATENCY_MS = 400;
+import { failure, reply } from './mock-http';
 
 const SAMPLE_POLLUTIONS: Pollution[] = [
   {
@@ -64,7 +62,7 @@ export const pollutionApiMockInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   if (!pollutions.has(id)) {
-    return notFound(req.url);
+    return failure(req.url, 404, "Cette pollution n'existe pas ou a été supprimée.");
   }
 
   switch (req.method) {
@@ -84,20 +82,4 @@ function save(id: string, draft: PollutionRequest): Pollution {
   const pollution: Pollution = { ...draft, id };
   pollutions.set(id, pollution);
   return pollution;
-}
-
-function reply<T>(url: string, status: number, body: T): Observable<HttpResponse<T>> {
-  return of(new HttpResponse({ status, url, body })).pipe(delay(LATENCY_MS));
-}
-
-function notFound(url: string): Observable<never> {
-  return throwError(
-    () =>
-      new HttpErrorResponse({
-        status: 404,
-        statusText: 'Not Found',
-        url,
-        error: { message: "Cette pollution n'existe pas ou a été supprimée." },
-      }),
-  ).pipe(delay(LATENCY_MS));
 }

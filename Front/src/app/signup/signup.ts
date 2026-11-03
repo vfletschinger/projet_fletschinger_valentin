@@ -1,24 +1,24 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { User } from '../models/user';
-import { SignupResponse } from '../models/signup';
-import { SignupApi } from '../services/signup-api';
+import { RouterLink } from '@angular/router';
+import { SignupForm, User } from '../models/user';
+import { UserApi } from '../services/user-api';
 import { PasswordMatch } from '../shared/password-match';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [FormsModule, PasswordMatch, DatePipe],
+  imports: [FormsModule, RouterLink, PasswordMatch, DatePipe],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
 })
 export class Signup {
-  private readonly signupApi = inject(SignupApi);
+  private readonly userApi = inject(UserApi);
 
-  protected user: User = this.createEmptyUser();
+  protected user: SignupForm = this.createEmptyUser();
 
-  protected readonly registeredUser = signal<SignupResponse | null>(null);
+  protected readonly registeredUser = signal<User | null>(null);
   protected readonly submitting = signal(false);
   protected readonly serverError = signal<string | null>(null);
 
@@ -54,7 +54,7 @@ export class Signup {
     this.submitting.set(true);
     this.serverError.set(null);
 
-    this.signupApi.signUp({ login, password, lastName, firstName, email }).subscribe({
+    this.userApi.create({ login, password, lastName, firstName, email }).subscribe({
       next: (created) => {
         this.submitting.set(false);
         this.registeredUser.set(created);
@@ -75,7 +75,7 @@ export class Signup {
     this.showPassword = false;
   }
 
-  private createEmptyUser(): User {
+  private createEmptyUser(): SignupForm {
     return { login: '', password: '', confirmPassword: '', lastName: '', firstName: '', email: '' };
   }
 }

@@ -1,7 +1,12 @@
+/* La page occupe toute la hauteur laissée sous la barre de navigation (cf. app.css) */
+:host {
+  display: grid;
+  flex: 1;
+}
+
 .shell {
   display: grid;
   grid-template-columns: minmax(320px, 5fr) 7fr;
-  min-height: 100dvh;
 }
 
 .showcase {
@@ -110,7 +115,7 @@ h2 {
   background: var(--accent);
 }
 
-.btn-primary {
+form .btn-primary {
   margin-top: 8px;
 }
 .input-wrap {

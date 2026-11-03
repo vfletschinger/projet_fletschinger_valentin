@@ -3,8 +3,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
-import { apiMockInterceptor } from './services/api-mock';
 import { pollutionApiMockInterceptor } from './services/pollution-api-mock';
+import { userApiMockInterceptor } from './services/user-api-mock';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
@@ -13,7 +13,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
       withInterceptors(
-        environment.useApiMock ? [apiMockInterceptor, pollutionApiMockInterceptor] : [],
+        environment.useApiMock ? [userApiMockInterceptor, pollutionApiMockInterceptor] : [],
       ),
     ),
   ],
