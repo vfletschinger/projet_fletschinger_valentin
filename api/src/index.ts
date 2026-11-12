@@ -29,8 +29,9 @@ app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "OK" });
 });
 
+// `alter` ajoute aux tables existantes les colonnes apparues dans les modèles (ex. dangerIndex)
 db.sequelize
-  .sync()
+  .sync({ alter: true })
   .then(async () => {
     console.log("Synced db.");
     try {
@@ -44,7 +45,8 @@ db.sequelize
             observedAt: "2026-09-12",
             place: "Quai de Seine, Paris",
             latitude: 48.8566,
-            longitude: 2.3522
+            longitude: 2.3522,
+            dangerIndex: 120
           },
           {
             title: "Sacs plastiques sur la plage",
@@ -53,7 +55,8 @@ db.sequelize
             observedAt: "2026-10-03",
             place: "Plage du Prado, Marseille",
             latitude: 43.2598,
-            longitude: 5.3747
+            longitude: 5.3747,
+            dangerIndex: 35
           },
           {
             title: "Gravats en lisière de forêt",
@@ -62,7 +65,18 @@ db.sequelize
             observedAt: "2026-08-20",
             place: "Forêt de Fontainebleau",
             latitude: 48.4047,
-            longitude: 2.7016
+            longitude: 2.7016,
+            dangerIndex: 65
+          },
+          {
+            title: "Mégots devant la gare",
+            type: "Autre",
+            description: "Une cinquantaine de mégots autour des bancs.",
+            observedAt: "2026-10-28",
+            place: "Gare de Lyon-Part-Dieu, Lyon",
+            latitude: 45.7606,
+            longitude: 4.8593,
+            dangerIndex: 8
           }
         ]);
         console.log("Jeu de données initial pour la table pollution inséré avec succès.");

@@ -21,7 +21,8 @@ const pollutionFromBody = (body: Record<string, unknown>): PollutionCreationAttr
   place: trimmed(body.place) as string,
   latitude: (body.latitude as number | null | undefined) ?? null,
   longitude: (body.longitude as number | null | undefined) ?? null,
-  photoUrl: trimmed(body.photoUrl) ?? ""
+  photoUrl: trimmed(body.photoUrl) ?? "",
+  dangerIndex: body.dangerIndex as number | undefined
 });
 
 /**

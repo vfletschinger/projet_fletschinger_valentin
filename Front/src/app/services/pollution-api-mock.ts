@@ -13,6 +13,7 @@ const SAMPLE_POLLUTIONS: Pollution[] = [
     latitude: 48.8566,
     longitude: 2.3522,
     photoUrl: '',
+    dangerIndex: 120,
   },
   {
     id: 'p-2',
@@ -24,6 +25,7 @@ const SAMPLE_POLLUTIONS: Pollution[] = [
     latitude: 43.2598,
     longitude: 5.3747,
     photoUrl: '',
+    dangerIndex: 35,
   },
   {
     id: 'p-3',
@@ -35,6 +37,19 @@ const SAMPLE_POLLUTIONS: Pollution[] = [
     latitude: 48.4047,
     longitude: 2.7016,
     photoUrl: '',
+    dangerIndex: 65,
+  },
+  {
+    id: 'p-4',
+    title: 'Mégots devant la gare',
+    type: 'Autre',
+    description: 'Une cinquantaine de mégots autour des bancs.',
+    observedAt: '2026-10-28',
+    place: 'Gare de Lyon-Part-Dieu, Lyon',
+    latitude: 45.7606,
+    longitude: 4.8593,
+    photoUrl: '',
+    dangerIndex: 8,
   },
 ];
 

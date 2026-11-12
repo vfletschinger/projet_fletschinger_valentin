@@ -14,10 +14,11 @@ export interface PollutionAttributes {
   latitude: number | null;
   longitude: number | null;
   photoUrl: string;
+  dangerIndex: number;
 }
 
 export interface PollutionCreationAttributes
-  extends Optional<PollutionAttributes, "id" | "description" | "latitude" | "longitude" | "photoUrl"> {}
+  extends Optional<PollutionAttributes, "id" | "description" | "latitude" | "longitude" | "photoUrl" | "dangerIndex"> {}
 
 export interface PollutionInstance
   extends Model<PollutionAttributes, PollutionCreationAttributes>,
@@ -96,6 +97,16 @@ export default function definePollutions(sequelize: Sequelize): PollutionModel {
         type: DataTypes.TEXT,
         allowNull: false,
         defaultValue: ""
+      },
+      dangerIndex: {
+        // Indice de dangerosité, traduit en niveau (Faible → Dangereuse) côté front
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          isInt: { msg: "L'indice de dangerosité doit être un nombre entier." },
+          min: { args: [0], msg: "L'indice de dangerosité doit être positif ou nul." }
+        }
       }
     },
     {
