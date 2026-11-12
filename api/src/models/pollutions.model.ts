@@ -1,5 +1,8 @@
 import { Sequelize, DataTypes, Model, Optional, ModelStatic } from "sequelize";
 
+/** Miroir de `POLLUTION_TYPES` dans `Front/src/app/models/pollution.ts`. */
+export const POLLUTION_TYPES = ["Plastique", "Chimique", "Dépôt sauvage", "Eau", "Air", "Autre"];
+
 /** Miroir de `Front/src/app/models/pollution.ts` : le front consomme ces champs tels quels. */
 export interface PollutionAttributes {
   id: string;
@@ -33,11 +36,20 @@ export default function definePollutions(sequelize: Sequelize): PollutionModel {
       },
       title: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          notEmpty: { msg: "Le titre est requis." }
+        }
       },
       type: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          isIn: {
+            args: [POLLUTION_TYPES],
+            msg: `Le type doit être l'un de : ${POLLUTION_TYPES.join(", ")}.`
+          }
+        }
       },
       description: {
         type: DataTypes.TEXT,
@@ -47,19 +59,38 @@ export default function definePollutions(sequelize: Sequelize): PollutionModel {
       observedAt: {
         // DATEONLY est renvoyé sous la forme "YYYY-MM-DD", comme l'attend le front
         type: DataTypes.DATEONLY,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          isDate: { args: true, msg: "La date d'observation est invalide." },
+          notInFuture(value: string) {
+            if (value > new Date().toISOString().slice(0, 10)) {
+              throw new Error("La date d'observation ne peut pas être dans le futur.");
+            }
+          }
+        }
       },
       place: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          notEmpty: { msg: "Le lieu est requis." }
+        }
       },
       latitude: {
         type: DataTypes.DOUBLE,
-        allowNull: true
+        allowNull: true,
+        validate: {
+          min: { args: [-90], msg: "La latitude doit être comprise entre -90 et 90." },
+          max: { args: [90], msg: "La latitude doit être comprise entre -90 et 90." }
+        }
       },
       longitude: {
         type: DataTypes.DOUBLE,
-        allowNull: true
+        allowNull: true,
+        validate: {
+          min: { args: [-180], msg: "La longitude doit être comprise entre -180 et 180." },
+          max: { args: [180], msg: "La longitude doit être comprise entre -180 et 180." }
+        }
       },
       photoUrl: {
         type: DataTypes.TEXT,

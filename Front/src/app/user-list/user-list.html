@@ -1,0 +1,39 @@
+<main class="page">
+  <header class="list-head">
+    <div>
+      <h1>Utilisateurs inscrits</h1>
+      <p class="lead">Comptes créés depuis le formulaire d'inscription.</p>
+    </div>
+    <a class="btn-primary" routerLink="/inscription">Inscrire un utilisateur</a>
+  </header>
+
+  @if (serverError(); as message) {
+    <p class="server-error" role="alert">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <p class="lead">Chargement des utilisateurs…</p>
+  } @else {
+    <p class="count">{{ users().length }} utilisateur(s)</p>
+
+    <ul class="items">
+      @for (user of users(); track user.id) {
+        <li class="item">
+          <div class="item-link">
+            <span class="badge">&#64;{{ user.login }}</span>
+            <strong class="item-title">{{ user.firstName }} {{ user.lastName }}</strong>
+            <span class="item-meta">
+              {{ user.email }} · inscrit le {{ user.createdAt | date: 'dd/MM/yyyy' }}
+            </span>
+          </div>
+          <button type="button" class="btn-danger" (click)="remove(user)"
+                  [attr.aria-label]="'Supprimer le compte ' + user.login">
+            Supprimer
+          </button>
+        </li>
+      } @empty {
+        <li class="empty">Aucun utilisateur inscrit pour le moment.</li>
+      }
+    </ul>
+  }
+</main>

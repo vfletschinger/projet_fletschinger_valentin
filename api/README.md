@@ -14,8 +14,18 @@ API Express + Sequelize branchée sur PostgreSQL. Le front Angular se trouve dan
 
 3. `npm run dev` → http://localhost:3000/api/pollutions
 
-Au démarrage, `sequelize.sync()` crée la table `pollution` si elle n'existe pas et
-y insère un jeu de données d'exemple si elle est vide.
+Au démarrage, `sequelize.sync()` crée les tables `pollution` et `users` si elles
+n'existent pas, puis insère un jeu de pollutions d'exemple si la table est vide.
+
+Côté front, `ng serve` interroge directement cette API (`useApiMock: false` dans
+`environment.development.ts`) : lancer `npm run dev` ici avant `ng serve` dans `../Front`.
+
+## Organisation
+
+- `src/models/` : entités Sequelize et leurs validations (`*.model.ts`)
+- `src/controllers/` : logique des requêtes (`findAll`, `findByPk`, `create`, `update`, `destroy`)
+- `src/routes/` : association verbe HTTP + chemin → contrôleur
+- `src/utils/` : helpers partagés (réponses d'erreur, hachage du mot de passe)
 
 ## Déploiement
 
@@ -24,30 +34,27 @@ y insère un jeu de données d'exemple si elle est vide.
 
 ## Contrat attendu par le front
 
-Tant que ce dossier est vide, les intercepteurs `Front/src/app/services/*-mock.ts`
-répondent à la place du serveur (activé par `environment.useApiMock`). Le backend
-devra respecter le même contrat pour que le front fonctionne sans modification.
-
-### URL de base
-
-Configurée côté front dans `Front/src/environments/` :
-
-- `ng serve` → `http://localhost:3000/api` (mock actif)
-- build de production → `/api` (mock actif lui aussi, faute d'API déployée)
-
-Une fois l'API en ligne, renseigner son URL dans `environment.ts` et passer
-`useApiMock` à `false`.
+Le front s'appuie sur ce contrat ; ses intercepteurs `Front/src/app/services/*-mock.ts`
+le reproduisent quand `environment.useApiMock` vaut `true` (pour travailler sans base).
 
 ### Endpoints
 
-| Méthode  | Route               | Corps            | Réponse                         |
-| -------- | ------------------- | ---------------- | ------------------------------- |
-| `POST`   | `/auth/signup`      | `SignupRequest`  | `201` + `SignupResponse`, `409` |
-| `GET`    | `/pollutions`       | —                | `200` + `Pollution[]`           |
-| `GET`    | `/pollutions/:id`   | —                | `200` + `Pollution`, `404`      |
-| `POST`   | `/pollutions`       | `PollutionRequest` | `201` + `Pollution`             |
-| `PUT`    | `/pollutions/:id`   | `PollutionRequest` | `200` + `Pollution`, `404`      |
-| `DELETE` | `/pollutions/:id`   | —                | `204`, `404`                    |
+| Méthode  | Route                  | Corps              | Réponse                         |
+| -------- | ---------------------- | ------------------ | ------------------------------- |
+| `GET`    | `/api/users`           | —                  | `200` + `User[]`                |
+| `POST`   | `/api/users`           | `UserRequest`      | `201` + `User`, `400`, `409`    |
+| `POST`   | `/api/users/login`     | `LoginRequest`     | `200` + `User`, `400`, `401`    |
+| `DELETE` | `/api/users/:id`       | —                  | `204`, `404`                    |
+| `GET`    | `/api/pollutions`      | —                  | `200` + `Pollution[]`           |
+| `GET`    | `/api/pollutions/:id`  | —                  | `200` + `Pollution`, `404`      |
+| `POST`   | `/api/pollutions`      | `PollutionRequest` | `201` + `Pollution`, `400`      |
+| `PUT`    | `/api/pollutions/:id`  | `PollutionRequest` | `200` + `Pollution`, `400`, `404` |
+| `DELETE` | `/api/pollutions/:id`  | —                  | `204`, `404`                    |
 
-Les types sont définis dans `Front/src/app/models/`. En cas d'erreur, le corps
-peut contenir `{ "message": "..." }`, affiché tel quel à l'utilisateur.
+Les types sont définis dans `Front/src/app/models/`. Le mot de passe est haché (scrypt)
+avant l'écriture et n'est jamais renvoyé. En cas d'erreur, le corps contient
+`{ "message": "..." }`, affiché tel quel à l'utilisateur.
+
+`POST /api/users/login` est une authentification **fictive** : elle vérifie le couple
+login / mot de passe et renvoie le compte, sans jeton ni session. Les autres routes ne
+contrôlent donc pas qui les appelle ; seul le front restreint l'accès à certains écrans.

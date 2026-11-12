@@ -1,0 +1,36 @@
+<main class="page">
+  <header class="page-head">
+    <h1>Connexion</h1>
+    <p class="lead">
+      Connectez-vous pour déclarer ou modifier une pollution. Pas encore de compte ?
+      <a routerLink="/inscription">Inscrivez-vous</a>.
+    </p>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="field" [class.invalid]="controls.login.touched && controls.login.invalid">
+      <label for="login">Login</label>
+      <input id="login" type="text" formControlName="login" autocomplete="username" />
+      @if (controls.login.touched && controls.login.invalid) {
+        <small class="error">Le login est requis.</small>
+      }
+    </div>
+
+    <div class="field" [class.invalid]="controls.password.touched && controls.password.invalid">
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" formControlName="password"
+             autocomplete="current-password" />
+      @if (controls.password.touched && controls.password.invalid) {
+        <small class="error">Le mot de passe est requis.</small>
+      }
+    </div>
+
+    @if (serverError(); as message) {
+      <p class="server-error" role="alert">{{ message }}</p>
+    }
+
+    <button type="submit" class="btn-primary" [disabled]="submitting()">
+      {{ submitting() ? 'Connexion…' : 'Se connecter' }}
+    </button>
+  </form>
+</main>
