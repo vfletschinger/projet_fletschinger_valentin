@@ -1,6 +1,11 @@
 <section class="recap">
   <header class="recap-head">
-    <p class="badge">{{ pollution.type }}</p>
+    <div class="badges">
+      <p class="badge">{{ pollution.type }}</p>
+      <p class="badge" [appHighlightPollution]="pollution.dangerIndex">
+        {{ pollution.dangerIndex | pollutionLevel: 'detailed' }}
+      </p>
+    </div>
     <h2>{{ pollution.title }}</h2>
   </header>
 

@@ -16,6 +16,7 @@ describe('pollutionApiMockInterceptor', () => {
     latitude: 45.764,
     longitude: 4.8357,
     photoUrl: '',
+    dangerIndex: 45,
   };
 
   let service: PollutionApi;

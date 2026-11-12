@@ -18,6 +18,7 @@ describe('PollutionApi', () => {
     latitude: 48.8566,
     longitude: 2.3522,
     photoUrl: '',
+    dangerIndex: 120,
   };
   const pollution: Pollution = { ...draft, id: 'p-1' };
 

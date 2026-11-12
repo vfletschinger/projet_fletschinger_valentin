@@ -1,15 +1,17 @@
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { POLLUTION_TYPES, PollutionType } from '../models/pollution';
+import { POLLUTION_TYPES, PollutionRequest, PollutionType } from '../models/pollution';
 import { PollutionApi } from '../services/pollution-api';
+import { HighlightPollutionDirective } from '../shared/highlight-pollution-directive';
 import { notBlank } from '../shared/not-blank';
 import { notInFuture } from '../shared/not-in-future';
+import { PollutionLevelPipe } from '../shared/pollution-level-pipe';
 
 @Component({
   selector: 'app-pollution-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, PollutionLevelPipe, HighlightPollutionDirective],
   templateUrl: './pollution-form.html',
 })
 export class PollutionForm implements OnInit {
@@ -56,6 +58,11 @@ export class PollutionForm implements OnInit {
       nonNullable: true,
       validators: [Validators.pattern(/^https?:\/\/\S+$/)],
     }),
+    dangerIndex: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0),
+      Validators.pattern(/^\d+$/),
+    ]),
   });
 
   protected readonly controls = this.form.controls;
@@ -86,7 +93,9 @@ export class PollutionForm implements OnInit {
       return;
     }
 
-    const draft = this.form.getRawValue();
+    const { dangerIndex, ...fields } = this.form.getRawValue();
+    // `Validators.required` garantit qu'un formulaire valide a un indice renseigné.
+    const draft: PollutionRequest = { ...fields, dangerIndex: dangerIndex! };
     const request = this.id
       ? this.pollutionApi.update(this.id, draft)
       : this.pollutionApi.create(draft);
