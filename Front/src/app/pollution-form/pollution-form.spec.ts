@@ -20,6 +20,7 @@ describe('PollutionForm', () => {
     latitude: 48.8566,
     longitude: 2.3522,
     photoUrl: '',
+    dangerIndex: 120,
   };
 
   let fixture: ComponentFixture<PollutionForm>;
@@ -57,6 +58,7 @@ describe('PollutionForm', () => {
     await fill('latitude', '48.8566');
     await fill('longitude', '2.3522');
     await fill('photoUrl', photoUrl);
+    await fill('dangerIndex', '120');
     fixture.detectChanges();
   }
 
@@ -92,6 +94,24 @@ describe('PollutionForm', () => {
       await fill('latitude', '120');
 
       expect(el.textContent).toContain('La latitude doit être comprise entre -90 et 90.');
+    });
+
+    it("refuse un indice de dangerosité qui n'est pas un entier positif", async () => {
+      await fillAll();
+      await fill('dangerIndex', '-3');
+      expect(el.textContent).toContain("L'indice doit être un nombre entier positif ou nul.");
+
+      await fill('dangerIndex', '12.5');
+      expect(el.textContent).toContain("L'indice doit être un nombre entier positif ou nul.");
+    });
+
+    it("prévisualise le niveau de pollution de l'indice saisi", async () => {
+      await fillAll();
+      await fill('dangerIndex', '42');
+
+      const preview = el.querySelector<HTMLElement>('.field .badge')!;
+      expect(preview.textContent!.trim()).toBe('Niveau : Modérée');
+      expect(preview.style.backgroundColor).toBe('var(--level-moderate)');
     });
 
     it("refuse une date postérieure à aujourd'hui", async () => {

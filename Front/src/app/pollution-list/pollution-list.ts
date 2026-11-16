@@ -1,16 +1,27 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution';
 import { PollutionApi } from '../services/pollution-api';
+import { HighlightPollutionDirective } from '../shared/highlight-pollution-directive';
+import { PollutionLevelPipe } from '../shared/pollution-level-pipe';
 
 @Component({
   selector: 'app-pollution-list',
   standalone: true,
-  imports: [FormsModule, RouterLink, DatePipe],
+  imports: [FormsModule, RouterLink, DatePipe, PollutionLevelPipe, HighlightPollutionDirective],
   templateUrl: './pollution-list.html',
   styleUrl: './pollution-list.css',
+  // Tout l'état passe par des signaux, mis à jour sans mutation : OnPush suffit.
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionList implements OnInit {
   private readonly pollutionApi = inject(PollutionApi);

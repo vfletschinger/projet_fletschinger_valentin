@@ -12,6 +12,12 @@
   --danger: #c62e3d;
   --success: #1f8a5b;
 
+  /* Niveaux de pollution (HighlightPollutionDirective) */
+  --level-low: #c8f0d3;
+  --level-moderate: #fde047;
+  --level-high: #fb923c;
+  --level-danger: #dc2626;
+
   --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
@@ -167,6 +173,12 @@ textarea:focus {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .btn-primary,

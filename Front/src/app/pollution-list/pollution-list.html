@@ -47,7 +47,12 @@
       @for (pollution of filteredPollutions(); track pollution.id) {
         <li class="item">
           <a class="item-link" [routerLink]="['/pollutions', pollution.id]">
-            <span class="badge">{{ pollution.type }}</span>
+            <span class="badges">
+              <span class="badge">{{ pollution.type }}</span>
+              <span class="badge" [appHighlightPollution]="pollution.dangerIndex">
+                {{ pollution.dangerIndex | pollutionLevel }}
+              </span>
+            </span>
             <strong class="item-title">{{ pollution.title }}</strong>
             <span class="item-meta">
               {{ pollution.place }} · {{ pollution.observedAt | date: 'dd/MM/yyyy' }}

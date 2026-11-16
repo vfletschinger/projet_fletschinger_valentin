@@ -19,6 +19,8 @@ export interface Pollution {
   latitude: number | null;
   longitude: number | null;
   photoUrl: string;
+  /** Indice de dangerosité (entier ≥ 0), traduit en niveau par `PollutionLevelPipe`. */
+  dangerIndex: number;
 }
 
 /** Corps envoyé à l'API en création comme en modification : l'id est fourni par le serveur. */

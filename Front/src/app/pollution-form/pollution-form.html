@@ -99,6 +99,27 @@
       </div>
     </div>
 
+    <div
+      class="field"
+      [class.invalid]="controls.dangerIndex.touched && controls.dangerIndex.invalid"
+    >
+      <label for="dangerIndex">Indice de dangerosité *</label>
+      <input id="dangerIndex" type="number" min="0" step="1" formControlName="dangerIndex" />
+      @if (controls.dangerIndex.touched && controls.dangerIndex.invalid) {
+        <small class="error">
+          @if (controls.dangerIndex.hasError('required')) {
+            L'indice de dangerosité est requis.
+          } @else {
+            L'indice doit être un nombre entier positif ou nul.
+          }
+        </small>
+      } @else if (controls.dangerIndex.valid && controls.dangerIndex.value !== null) {
+        <span class="badge" [appHighlightPollution]="controls.dangerIndex.value">
+          Niveau : {{ controls.dangerIndex.value | pollutionLevel }}
+        </span>
+      }
+    </div>
+
     <div class="field" [class.invalid]="controls.photoUrl.touched && controls.photoUrl.invalid">
       <label for="photoUrl">Photo (URL)</label>
       <input id="photoUrl" type="url" formControlName="photoUrl" placeholder="https://..." />

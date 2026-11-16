@@ -10,7 +10,7 @@ import { PollutionList } from './pollution-list';
 describe('PollutionList', () => {
   const url = `${environment.apiBaseUrl}/pollutions`;
 
-  const base: Omit<Pollution, 'id' | 'title' | 'type' | 'place' | 'observedAt'> = {
+  const base: Omit<Pollution, 'id' | 'title' | 'type' | 'place' | 'observedAt' | 'dangerIndex'> = {
     description: 'Description',
     latitude: 48.85,
     longitude: 2.35,
@@ -23,6 +23,7 @@ describe('PollutionList', () => {
       title: 'Bidons',
       type: 'Chimique',
       place: 'Paris',
+      dangerIndex: 120,
       observedAt: '2026-09-12',
     },
     {
@@ -31,6 +32,7 @@ describe('PollutionList', () => {
       title: 'Sacs',
       type: 'Plastique',
       place: 'Marseille',
+      dangerIndex: 35,
       observedAt: '2026-10-03',
     },
     {
@@ -39,6 +41,7 @@ describe('PollutionList', () => {
       title: 'Gravats',
       type: 'Dépôt sauvage',
       place: 'Fontainebleau',
+      dangerIndex: 10,
       observedAt: '2026-08-20',
     },
   ];
@@ -78,6 +81,17 @@ describe('PollutionList', () => {
   it("affiche les pollutions renvoyées par l'API", () => {
     expect(titles()).toEqual(['Bidons', 'Sacs', 'Gravats']);
     expect(el.querySelector('.item-link')!.getAttribute('href')).toBe('/pollutions/p-1');
+  });
+
+  it('affiche le niveau de pollution de chaque signalement, coloré selon sa gravité', () => {
+    const levels = [...el.querySelectorAll<HTMLElement>('.item .badge + .badge')];
+
+    expect(levels.map((level) => level.textContent!.trim())).toEqual([
+      'Dangereuse',
+      'Modérée',
+      'Faible',
+    ]);
+    expect(levels[0].style.backgroundColor).toBe('var(--level-danger)');
   });
 
   it('filtre par texte, type et date en combinant les critères', async () => {

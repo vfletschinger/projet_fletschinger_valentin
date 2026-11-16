@@ -14,8 +14,9 @@ API Express + Sequelize branchée sur PostgreSQL. Le front Angular se trouve dan
 
 3. `npm run dev` → http://localhost:3000/api/pollutions
 
-Au démarrage, `sequelize.sync()` crée les tables `pollution` et `users` si elles
-n'existent pas, puis insère un jeu de pollutions d'exemple si la table est vide.
+Au démarrage, `sequelize.sync({ alter: true })` crée les tables `pollution` et `users` si
+elles n'existent pas (ou leur ajoute les colonnes apparues dans les modèles, comme
+`dangerIndex`), puis insère un jeu de pollutions d'exemple si la table est vide.
 
 Côté front, `ng serve` interroge directement cette API (`useApiMock: false` dans
 `environment.development.ts`) : lancer `npm run dev` ici avant `ng serve` dans `../Front`.

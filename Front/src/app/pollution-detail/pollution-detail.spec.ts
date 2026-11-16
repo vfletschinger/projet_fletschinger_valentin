@@ -20,6 +20,7 @@ describe('PollutionDetail', () => {
     latitude: 48.8566,
     longitude: 2.3522,
     photoUrl: 'https://exemple.fr/pollution.jpg',
+    dangerIndex: 120,
   };
 
   let fixture: ComponentFixture<PollutionDetail>;
@@ -48,6 +49,7 @@ describe('PollutionDetail', () => {
     expect(el.querySelector('h2')!.textContent).toBe('Bidons abandonnés');
     expect(el.textContent).toContain('15/01/2026');
     expect(el.textContent).toContain('Quai de Seine, Paris');
+    expect(el.textContent).toContain('Dangereuse (indice 120)');
     expect(el.querySelector('img')!.getAttribute('src')).toBe(pollution.photoUrl);
     expect(el.querySelector('.actions a')!.getAttribute('href')).toBe('/pollutions/p-1/modifier');
   });
