@@ -1,14 +1,16 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Pollution } from '../models/pollution';
+import { Pollution } from '../../models/pollution';
 import { PollutionRecap } from '../pollution-recap/pollution-recap';
-import { PollutionApi } from '../services/pollution-api';
+import { PollutionApi } from '../../services/pollution-api';
 
 @Component({
   selector: 'app-pollution-detail',
   standalone: true,
   imports: [RouterLink, PollutionRecap],
   templateUrl: './pollution-detail.html',
+  // La pollution chargée et l'erreur sont des signaux : la vue se rafraîchit d'elle-même.
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionDetail implements OnInit {
   private readonly pollutionApi = inject(PollutionApi);

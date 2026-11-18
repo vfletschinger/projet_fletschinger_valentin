@@ -1,11 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 
-import { environment } from '../../environments/environment';
-import { User } from '../models/user';
-import { Auth } from '../services/auth';
+import { environment } from '../../../environments/environment';
+import { User } from '../../models/user';
+import { Auth } from '../../services/auth';
 import { UserList } from './user-list';
 
 describe('UserList', () => {
@@ -96,18 +96,20 @@ describe('UserList', () => {
     expect(names()).toEqual(['Jean Durand']);
   });
 
-  it('déconnecte la personne qui supprime son propre compte', async () => {
+  it('déconnecte et renvoie à la liste la personne qui supprime son propre compte', async () => {
     http.expectOne(url).flush(users);
     await fixture.whenStable();
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     const auth = TestBed.inject(Auth);
     vi.spyOn(auth, 'user').mockReturnValue(users[0]);
     const logout = vi.spyOn(auth, 'logout');
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
     el.querySelector<HTMLButtonElement>('.item .btn-danger')!.click();
     http.expectOne(`${url}/u-1`).flush(null, { status: 204, statusText: 'No Content' });
 
     expect(logout).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith(['/pollutions']);
   });
 
   it("ne supprime rien si l'utilisateur annule", async () => {

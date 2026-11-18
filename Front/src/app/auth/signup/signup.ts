@@ -2,9 +2,9 @@ import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { SignupForm, User } from '../models/user';
-import { UserApi } from '../services/user-api';
-import { PasswordMatch } from '../shared/password-match';
+import { SignupForm, User } from '../../models/user';
+import { UserApi } from '../../services/user-api';
+import { PasswordMatch } from '../../shared/password-match';
 
 @Component({
   selector: 'app-signup',
@@ -12,6 +12,10 @@ import { PasswordMatch } from '../shared/password-match';
   imports: [FormsModule, RouterLink, PasswordMatch, DatePipe],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
+  // Stratégie par défaut conservée volontairement : le modèle `user` est muté en place par
+  // `ngModel` et lu par un getter (`initials`) et par `validCount(form)`, dont le résultat change
+  // quand les contrôles s'enregistrent de façon asynchrone. OnPush risquerait d'afficher une carte
+  // membre ou une progression périmées, sans gain notable sur un écran aussi court.
 })
 export class Signup {
   private readonly userApi = inject(UserApi);

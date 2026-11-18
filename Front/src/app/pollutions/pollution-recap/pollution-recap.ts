@@ -1,8 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Pollution } from '../models/pollution';
-import { HighlightPollutionDirective } from '../shared/highlight-pollution-directive';
-import { PollutionLevelPipe } from '../shared/pollution-level-pipe';
+import { Pollution } from '../../models/pollution';
+import { HighlightPollutionDirective } from '../../shared/highlight-pollution-directive';
+import { PollutionLevelPipe } from '../../shared/pollution-level-pipe';
 
 @Component({
   selector: 'app-pollution-recap',

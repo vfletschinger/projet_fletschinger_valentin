@@ -1,22 +1,36 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { POLLUTION_TYPES, PollutionRequest, PollutionType } from '../models/pollution';
-import { PollutionApi } from '../services/pollution-api';
-import { HighlightPollutionDirective } from '../shared/highlight-pollution-directive';
-import { notBlank } from '../shared/not-blank';
-import { notInFuture } from '../shared/not-in-future';
-import { PollutionLevelPipe } from '../shared/pollution-level-pipe';
+import { POLLUTION_TYPES, PollutionRequest, PollutionType } from '../../models/pollution';
+import { PollutionApi } from '../../services/pollution-api';
+import { HighlightPollutionDirective } from '../../shared/highlight-pollution-directive';
+import { notBlank } from '../../shared/not-blank';
+import { notInFuture } from '../../shared/not-in-future';
+import { PollutionLevelPipe } from '../../shared/pollution-level-pipe';
+import { HasUnsavedChanges } from '../../shared/unsaved-changes-guard';
 
 @Component({
   selector: 'app-pollution-form',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, PollutionLevelPipe, HighlightPollutionDirective],
   templateUrl: './pollution-form.html',
+  // La saisie déclenche des événements du template, qui marquent la vue à rafraîchir, et l'état
+  // des contrôles (`valid`, `touched`…) est porté par des signaux depuis Angular 20. Seul le
+  // pré-remplissage asynchrone, hors événement, mérite un `markForCheck()` explicite.
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PollutionForm implements OnInit {
+export class PollutionForm implements OnInit, HasUnsavedChanges {
   private readonly pollutionApi = inject(PollutionApi);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   /** Paramètre `:id` de la route de modification ; absent en création. */
   @Input() id?: string;
@@ -76,9 +90,19 @@ export class PollutionForm implements OnInit {
     }
 
     this.pollutionApi.getById(this.id).subscribe({
-      next: (pollution) => this.form.patchValue(pollution),
+      next: (pollution) => {
+        this.form.patchValue(pollution);
+        // La *valeur* d'un contrôle n'est pas un signal : on signale nous-mêmes que la vue
+        // (aperçu du niveau de l'indice chargé) doit être revérifiée.
+        this.cdr.markForCheck();
+      },
       error: (error: Error) => this.serverError.set(error.message),
     });
+  }
+
+  /** Consulté par `unsavedChangesGuard` avant de quitter l'écran. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   protected onSubmit(): void {
@@ -104,7 +128,11 @@ export class PollutionForm implements OnInit {
     this.serverError.set(null);
 
     request.subscribe({
-      next: (saved) => this.router.navigate(['/pollutions', saved.id]),
+      next: (saved) => {
+        // La saisie est enregistrée : le guard ne doit plus demander confirmation.
+        this.form.markAsPristine();
+        this.router.navigate(['/pollutions', saved.id]);
+      },
       error: (error: Error) => {
         this.submitting.set(false);
         this.serverError.set(error.message);
