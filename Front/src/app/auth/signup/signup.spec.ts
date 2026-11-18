@@ -3,8 +3,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { environment } from '../../environments/environment';
-import { User } from '../models/user';
+import { environment } from '../../../environments/environment';
+import { User } from '../../models/user';
 import { Signup } from './signup';
 
 describe('Signup', () => {

@@ -9,10 +9,10 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution';
-import { PollutionApi } from '../services/pollution-api';
-import { HighlightPollutionDirective } from '../shared/highlight-pollution-directive';
-import { PollutionLevelPipe } from '../shared/pollution-level-pipe';
+import { POLLUTION_TYPES, Pollution, PollutionType } from '../../models/pollution';
+import { PollutionApi } from '../../services/pollution-api';
+import { HighlightPollutionDirective } from '../../shared/highlight-pollution-directive';
+import { PollutionLevelPipe } from '../../shared/pollution-level-pipe';
 
 @Component({
   selector: 'app-pollution-list',

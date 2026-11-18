@@ -3,8 +3,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { environment } from '../../environments/environment';
-import { Pollution } from '../models/pollution';
+import { environment } from '../../../environments/environment';
+import { Pollution } from '../../models/pollution';
 import { PollutionList } from './pollution-list';
 
 describe('PollutionList', () => {

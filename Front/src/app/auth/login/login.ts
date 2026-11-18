@@ -1,14 +1,16 @@
-import { Component, Input, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Auth } from '../services/auth';
-import { notBlank } from '../shared/not-blank';
+import { Auth } from '../../services/auth';
+import { notBlank } from '../../shared/not-blank';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
+  // État en signaux, formulaire réactif piloté par les événements du template : OnPush suffit.
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Login {
   private readonly auth = inject(Auth);

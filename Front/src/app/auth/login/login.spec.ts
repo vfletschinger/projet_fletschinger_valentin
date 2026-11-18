@@ -3,9 +3,9 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 
-import { environment } from '../../environments/environment';
-import { User } from '../models/user';
-import { Auth } from '../services/auth';
+import { environment } from '../../../environments/environment';
+import { User } from '../../models/user';
+import { Auth } from '../../services/auth';
 import { Login } from './login';
 
 describe('Login', () => {

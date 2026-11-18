@@ -3,8 +3,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 
-import { environment } from '../../environments/environment';
-import { Pollution } from '../models/pollution';
+import { environment } from '../../../environments/environment';
+import { Pollution } from '../../models/pollution';
 import { PollutionForm } from './pollution-form';
 
 describe('PollutionForm', () => {
@@ -152,6 +152,15 @@ describe('PollutionForm', () => {
       request.flush({ ...request.request.body, id: 'p-9' }, { status: 201, statusText: 'Created' });
 
       expect(navigate).toHaveBeenCalledWith(['/pollutions', 'p-9']);
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(false);
+    });
+
+    it('signale une saisie non enregistrée au guard de sortie', async () => {
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(false);
+
+      await fill('title', 'Bidons abandonnés');
+
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(true);
     });
 
     it("affiche l'erreur du serveur et réactive le bouton", async () => {
@@ -179,6 +188,14 @@ describe('PollutionForm', () => {
       expect(el.querySelector('h1')!.textContent).toBe('Modifier la pollution');
       expect(input('title').value).toBe('Bidons abandonnés');
       expect(input('latitude').value).toBe('48.8566');
+    });
+
+    it("affiche l'aperçu du niveau dès le chargement malgré OnPush", () => {
+      expect(el.querySelector('.field .badge')!.textContent!.trim()).toBe('Niveau : Dangereuse');
+    });
+
+    it("ne compte pas le pré-remplissage comme une saisie à protéger", () => {
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(false);
     });
 
     it('enregistre les modifications par un PUT', async () => {
