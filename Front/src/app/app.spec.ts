@@ -1,26 +1,11 @@
-import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { Store, provideStore } from '@ngxs/store';
 import { App } from './app';
-import { User } from './models/user';
-import { Auth } from './services/auth';
+import { Login } from './store/auth/auth.actions';
+import { AuthState } from './store/auth/auth.state';
 
 describe('App', () => {
-  const user: User = {
-    id: 'u-1',
-    login: 'mdupont',
-    lastName: 'Dupont',
-    firstName: 'Marie',
-    email: 'marie@exemple.fr',
-    createdAt: '2026-10-15T10:00:00.000Z',
-  };
-
-  const current = signal<User | null>(null);
-  const auth = {
-    user: current.asReadonly(),
-    logout: vi.fn(() => current.set(null)),
-  };
-
   let fixture: ComponentFixture<App>;
   let el: HTMLElement;
 
@@ -28,12 +13,9 @@ describe('App', () => {
     [...el.querySelectorAll(selector)].map((link) => link.getAttribute('href'));
 
   beforeEach(async () => {
-    current.set(null);
-    auth.logout.mockClear();
-
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([]), { provide: Auth, useValue: auth }],
+      providers: [provideRouter([]), provideStore([AuthState])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(App);
@@ -56,16 +38,17 @@ describe('App', () => {
 
   it("salue l'utilisateur connecté et permet de se déconnecter", async () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    current.set(user);
+    const store = TestBed.inject(Store);
+    store.dispatch(new Login({ email: 'marie@exemple.fr', nom: 'Marie Dupont' }));
     fixture.detectChanges();
 
-    expect(el.querySelector('.greeting')!.textContent).toContain('Bonjour, Marie');
+    expect(el.querySelector('.greeting')!.textContent).toContain('Bonjour, Marie Dupont');
     expect(hrefs('.account a')).toEqual([]);
 
     el.querySelector<HTMLButtonElement>('button.nav-link')!.click();
     fixture.detectChanges();
 
-    expect(auth.logout).toHaveBeenCalled();
+    expect(store.selectSnapshot(AuthState.isAuthenticated)).toBe(false);
     expect(navigate).toHaveBeenCalledWith(['/pollutions']);
     expect(hrefs('.account a')).toEqual(['/connexion', '/inscription']);
   });

@@ -9,11 +9,13 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { filter, switchMap } from 'rxjs';
 import { User } from '../../models/user';
-import { Auth } from '../../services/auth';
 import { Confirmation } from '../../services/confirmation';
 import { UserApi } from '../../services/user-api';
+import { Logout } from '../../store/auth/auth.actions';
+import { AuthState } from '../../store/auth/auth.state';
 
 @Component({
   selector: 'app-user-list',
@@ -25,7 +27,7 @@ import { UserApi } from '../../services/user-api';
 })
 export class UserList implements OnInit {
   private readonly userApi = inject(UserApi);
-  private readonly auth = inject(Auth);
+  private readonly store = inject(Store);
   private readonly router = inject(Router);
   private readonly confirmation = inject(Confirmation);
   private readonly destroyRef = inject(DestroyRef);
@@ -67,8 +69,9 @@ export class UserList implements OnInit {
         next: () => {
           this.users.update((list) => list.filter(({ id }) => id !== user.id));
           // Un compte supprimé ne peut pas rester connecté, ni sur cet écran réservé aux connectés.
-          if (this.auth.user()?.id === user.id) {
-            this.auth.logout();
+          // L'email est unique côté API : il identifie le compte connecté dans le profil du store.
+          if (this.store.selectSnapshot(AuthState.user)?.email === user.email) {
+            this.store.dispatch(new Logout());
             this.router.navigate(['/pollutions']);
           }
         },

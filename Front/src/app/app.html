@@ -16,8 +16,8 @@
     </ul>
 
     <div class="account">
-      @if (auth.user(); as user) {
-        <span class="greeting">Bonjour, {{ user.firstName }}</span>
+      @if (isAuthenticated()) {
+        <span class="greeting">Bonjour, {{ username() }}</span>
         <button type="button" class="nav-link" (click)="logout()">Se déconnecter</button>
       } @else {
         <a class="nav-link" routerLink="/connexion" routerLinkActive="active" ariaCurrentWhenActive="page">

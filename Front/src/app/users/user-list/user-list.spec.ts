@@ -2,13 +2,15 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { Store, provideStore } from '@ngxs/store';
 
 import { of } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { User } from '../../models/user';
-import { Auth } from '../../services/auth';
 import { Confirmation } from '../../services/confirmation';
+import { Login } from '../../store/auth/auth.actions';
+import { AuthState } from '../../store/auth/auth.state';
 import { UserList } from './user-list';
 
 describe('UserList', () => {
@@ -43,7 +45,12 @@ describe('UserList', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [UserList],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        provideStore([AuthState]),
+      ],
     }).compileComponents();
 
     http = TestBed.inject(HttpTestingController);
@@ -112,15 +119,14 @@ describe('UserList', () => {
     http.expectOne(url).flush(users);
     await fixture.whenStable();
     vi.spyOn(TestBed.inject(Confirmation), 'ask').mockReturnValue(of(true));
-    const auth = TestBed.inject(Auth);
-    vi.spyOn(auth, 'user').mockReturnValue(users[0]);
-    const logout = vi.spyOn(auth, 'logout');
+    const store = TestBed.inject(Store);
+    store.dispatch(new Login({ email: 'marie@exemple.fr', nom: 'Marie Dupont' }));
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
     el.querySelector<HTMLButtonElement>('.item .btn-danger')!.click();
     http.expectOne(`${url}/u-1`).flush(null, { status: 204, statusText: 'No Content' });
 
-    expect(logout).toHaveBeenCalled();
+    expect(store.selectSnapshot(AuthState.isAuthenticated)).toBe(false);
     expect(navigate).toHaveBeenCalledWith(['/pollutions']);
   });
 

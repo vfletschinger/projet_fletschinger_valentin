@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   ActivatedRouteSnapshot,
@@ -7,13 +6,13 @@ import {
   UrlTree,
   provideRouter,
 } from '@angular/router';
+import { Store, provideStore } from '@ngxs/store';
 
-import { Auth } from '../services/auth';
+import { Login } from '../store/auth/auth.actions';
+import { AuthState } from '../store/auth/auth.state';
 import { guestGuard } from './guest-guard';
 
 describe('guestGuard', () => {
-  const loggedIn = signal(false);
-
   const run = () =>
     TestBed.runInInjectionContext(() =>
       guestGuard({} as ActivatedRouteSnapshot, { url: '/connexion' } as RouterStateSnapshot),
@@ -21,18 +20,16 @@ describe('guestGuard', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: Auth, useValue: { isLoggedIn: loggedIn } }],
+      providers: [provideRouter([]), provideStore([AuthState])],
     });
   });
 
   it('laisse passer un visiteur', () => {
-    loggedIn.set(false);
-
     expect(run()).toBe(true);
   });
 
   it('renvoie un utilisateur déjà connecté vers la liste', () => {
-    loggedIn.set(true);
+    TestBed.inject(Store).dispatch(new Login({ email: 'marie@exemple.fr', nom: 'Marie Dupont' }));
 
     const result = run() as UrlTree;
 

@@ -2,10 +2,11 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { Store, provideStore } from '@ngxs/store';
 
 import { environment } from '../../../environments/environment';
 import { User } from '../../models/user';
-import { Auth } from '../../services/auth';
+import { AuthState } from '../../store/auth/auth.state';
 import { Login } from './login';
 
 describe('Login', () => {
@@ -54,17 +55,19 @@ describe('Login', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Login],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        provideStore([AuthState]),
+      ],
     }).compileComponents();
 
     http = TestBed.inject(HttpTestingController);
     navigateByUrl = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
   });
 
-  afterEach(() => {
-    http.verify();
-    sessionStorage.clear();
-  });
+  afterEach(() => http.verify());
 
   it("refuse un login rempli uniquement d'espaces", async () => {
     await render();
@@ -94,7 +97,11 @@ describe('Login', () => {
     expect(request.request.body).toEqual({ login: 'mdupont', password: 'Secret123' });
     request.flush(user);
 
-    expect(TestBed.inject(Auth).user()).toEqual(user);
+    // Le profil renvoyé par l'API a été confié au store via l'action Login.
+    expect(TestBed.inject(Store).selectSnapshot(AuthState.user)).toMatchObject({
+      email: 'marie@exemple.fr',
+      nom: 'Marie Dupont',
+    });
     expect(navigateByUrl).toHaveBeenCalledWith('/pollutions/nouvelle');
   });
 
@@ -121,7 +128,7 @@ describe('Login', () => {
 
     expect(el.querySelector('[role="alert"]')!.textContent).toContain('incorrect');
     expect(submitButton().disabled).toBe(false);
-    expect(TestBed.inject(Auth).isLoggedIn()).toBe(false);
+    expect(TestBed.inject(Store).selectSnapshot(AuthState.isAuthenticated)).toBe(false);
     expect(navigateByUrl).not.toHaveBeenCalled();
   });
 });
