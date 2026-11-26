@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  Input,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
@@ -15,6 +23,7 @@ import { notBlank } from '../../shared/not-blank';
 export class Login {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Page demandée avant la redirection par `authGuard`, lue dans `?returnUrl=`. */
   @Input() returnUrl?: string;
@@ -45,12 +54,15 @@ export class Login {
     this.submitting.set(true);
     this.serverError.set(null);
 
-    this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigateByUrl(this.returnUrl ?? '/pollutions'),
-      error: (error: Error) => {
-        this.submitting.set(false);
-        this.serverError.set(error.message);
-      },
-    });
+    this.auth
+      .login(this.form.getRawValue())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.router.navigateByUrl(this.returnUrl ?? '/pollutions'),
+        error: (error: Error) => {
+          this.submitting.set(false);
+          this.serverError.set(error.message);
+        },
+      });
   }
 }

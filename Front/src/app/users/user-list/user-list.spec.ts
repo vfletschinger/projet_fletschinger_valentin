@@ -3,9 +3,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 
+import { of } from 'rxjs';
+
 import { environment } from '../../../environments/environment';
 import { User } from '../../models/user';
 import { Auth } from '../../services/auth';
+import { Confirmation } from '../../services/confirmation';
 import { UserList } from './user-list';
 
 describe('UserList', () => {
@@ -51,6 +54,15 @@ describe('UserList', () => {
 
   afterEach(() => http.verify());
 
+  it("annule le chargement si l'on quitte l'écran avant la réponse", () => {
+    const request = http.expectOne(url);
+
+    fixture.destroy();
+
+    // `takeUntilDestroyed` s'est désabonné : HttpClient a interrompu la requête.
+    expect(request.cancelled).toBe(true);
+  });
+
   it('affiche un message pendant le chargement', () => {
     expect(el.textContent).toContain('Chargement des utilisateurs');
 
@@ -84,7 +96,7 @@ describe('UserList', () => {
   it('supprime un utilisateur après confirmation', async () => {
     http.expectOne(url).flush(users);
     await fixture.whenStable();
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    vi.spyOn(TestBed.inject(Confirmation), 'ask').mockReturnValue(of(true));
 
     el.querySelector<HTMLButtonElement>('.item .btn-danger')!.click();
 
@@ -99,7 +111,7 @@ describe('UserList', () => {
   it('déconnecte et renvoie à la liste la personne qui supprime son propre compte', async () => {
     http.expectOne(url).flush(users);
     await fixture.whenStable();
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    vi.spyOn(TestBed.inject(Confirmation), 'ask').mockReturnValue(of(true));
     const auth = TestBed.inject(Auth);
     vi.spyOn(auth, 'user').mockReturnValue(users[0]);
     const logout = vi.spyOn(auth, 'logout');
@@ -115,7 +127,7 @@ describe('UserList', () => {
   it("ne supprime rien si l'utilisateur annule", async () => {
     http.expectOne(url).flush(users);
     await fixture.whenStable();
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    vi.spyOn(TestBed.inject(Confirmation), 'ask').mockReturnValue(of(false));
 
     el.querySelector<HTMLButtonElement>('.item .btn-danger')!.click();
 

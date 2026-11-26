@@ -3,8 +3,11 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 
+import { of } from 'rxjs';
+
 import { environment } from '../../../environments/environment';
 import { Pollution } from '../../models/pollution';
+import { Confirmation } from '../../services/confirmation';
 import { PollutionDetail } from './pollution-detail';
 
 describe('PollutionDetail', () => {
@@ -64,7 +67,7 @@ describe('PollutionDetail', () => {
 
   it('supprime la pollution puis revient à la liste', async () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    vi.spyOn(TestBed.inject(Confirmation), 'ask').mockReturnValue(of(true));
     http.expectOne(url).flush(pollution);
     await fixture.whenStable();
 

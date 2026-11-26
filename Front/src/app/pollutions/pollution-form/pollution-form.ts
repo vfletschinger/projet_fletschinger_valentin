@@ -2,11 +2,13 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   Input,
   OnInit,
   inject,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { POLLUTION_TYPES, PollutionRequest, PollutionType } from '../../models/pollution';
@@ -31,6 +33,7 @@ export class PollutionForm implements OnInit, HasUnsavedChanges {
   private readonly pollutionApi = inject(PollutionApi);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Paramètre `:id` de la route de modification ; absent en création. */
   @Input() id?: string;
@@ -89,15 +92,18 @@ export class PollutionForm implements OnInit, HasUnsavedChanges {
       return;
     }
 
-    this.pollutionApi.getById(this.id).subscribe({
-      next: (pollution) => {
-        this.form.patchValue(pollution);
-        // La *valeur* d'un contrôle n'est pas un signal : on signale nous-mêmes que la vue
-        // (aperçu du niveau de l'indice chargé) doit être revérifiée.
-        this.cdr.markForCheck();
-      },
-      error: (error: Error) => this.serverError.set(error.message),
-    });
+    this.pollutionApi
+      .getById(this.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (pollution) => {
+          this.form.patchValue(pollution);
+          // La *valeur* d'un contrôle n'est pas un signal : on signale nous-mêmes que la vue
+          // (aperçu du niveau de l'indice chargé) doit être revérifiée.
+          this.cdr.markForCheck();
+        },
+        error: (error: Error) => this.serverError.set(error.message),
+      });
   }
 
   /** Consulté par `unsavedChangesGuard` avant de quitter l'écran. */
@@ -127,7 +133,7 @@ export class PollutionForm implements OnInit, HasUnsavedChanges {
     this.submitting.set(true);
     this.serverError.set(null);
 
-    request.subscribe({
+    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (saved) => {
         // La saisie est enregistrée : le guard ne doit plus demander confirmation.
         this.form.markAsPristine();

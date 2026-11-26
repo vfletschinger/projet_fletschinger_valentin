@@ -1,0 +1,116 @@
+.confirm {
+  width: min(420px, calc(100% - 32px));
+  max-width: none;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--radius) + 6px);
+  background: var(--paper);
+  color: var(--text);
+  box-shadow:
+    0 24px 60px -12px #12141c59,
+    0 0 0 1px #12141c0f;
+}
+
+.confirm::backdrop {
+  background: #12141c80;
+  backdrop-filter: blur(3px);
+}
+
+.confirm[open] {
+  animation: pop-in 0.18s ease-out;
+}
+.confirm[open]::backdrop {
+  animation: fade-in 0.18s ease-out;
+}
+
+.panel {
+  display: grid;
+  gap: 10px;
+  padding: 28px;
+  --tone: var(--accent);
+}
+.panel.danger {
+  --tone: var(--danger);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--tone) 12%, transparent);
+  color: var(--tone);
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+h2 {
+  font-size: 1.7rem;
+}
+
+.message {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+.buttons button {
+  padding: 12px 18px;
+}
+
+.btn-danger-solid {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--danger);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+}
+.btn-danger-solid:hover {
+  background: #a82533;
+}
+.btn-danger-solid:active {
+  transform: translateY(1px);
+}
+.btn-danger-solid:focus-visible {
+  outline: 3px solid var(--danger);
+  outline-offset: 2px;
+}
+
+@media (max-width: 420px) {
+  .buttons {
+    flex-direction: column-reverse;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm[open],
+  .confirm[open]::backdrop {
+    animation: none;
+  }
+}

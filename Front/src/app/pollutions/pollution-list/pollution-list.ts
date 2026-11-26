@@ -2,14 +2,18 @@ import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   computed,
   inject,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { filter, switchMap } from 'rxjs';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../../models/pollution';
+import { Confirmation } from '../../services/confirmation';
 import { PollutionApi } from '../../services/pollution-api';
 import { HighlightPollutionDirective } from '../../shared/highlight-pollution-directive';
 import { PollutionLevelPipe } from '../../shared/pollution-level-pipe';
@@ -25,6 +29,8 @@ import { PollutionLevelPipe } from '../../shared/pollution-level-pipe';
 })
 export class PollutionList implements OnInit {
   private readonly pollutionApi = inject(PollutionApi);
+  private readonly confirmation = inject(Confirmation);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly pollutionTypes = POLLUTION_TYPES;
 
@@ -50,27 +56,38 @@ export class PollutionList implements OnInit {
   });
 
   ngOnInit(): void {
-    this.pollutionApi.getAll().subscribe({
-      next: (pollutions) => {
-        this.pollutions.set(pollutions);
-        this.loading.set(false);
-      },
-      error: (error: Error) => {
-        this.serverError.set(error.message);
-        this.loading.set(false);
-      },
-    });
+    this.pollutionApi
+      .getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (pollutions) => {
+          this.pollutions.set(pollutions);
+          this.loading.set(false);
+        },
+        error: (error: Error) => {
+          this.serverError.set(error.message);
+          this.loading.set(false);
+        },
+      });
   }
 
   protected remove(pollution: Pollution): void {
-    if (!confirm(`Supprimer « ${pollution.title} » ?`)) {
-      return;
-    }
-
-    this.pollutionApi.delete(pollution.id).subscribe({
-      next: () => this.pollutions.update((list) => list.filter(({ id }) => id !== pollution.id)),
-      error: (error: Error) => this.serverError.set(error.message),
-    });
+    this.confirmation
+      .ask({
+        title: 'Supprimer cette pollution ?',
+        message: `« ${pollution.title} » sera définitivement supprimée.`,
+        confirmLabel: 'Supprimer',
+        danger: true,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.pollutionApi.delete(pollution.id)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: () => this.pollutions.update((list) => list.filter(({ id }) => id !== pollution.id)),
+        error: (error: Error) => this.serverError.set(error.message),
+      });
   }
 
   protected resetFilters(): void {

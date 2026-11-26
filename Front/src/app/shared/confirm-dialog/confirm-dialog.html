@@ -1,0 +1,33 @@
+<dialog
+  #dialog
+  class="confirm"
+  aria-labelledby="confirm-title"
+  aria-describedby="confirm-message"
+  (cancel)="onCancel($event)"
+  (click)="onBackdropClick($event)"
+>
+  @if (confirmation.pending(); as request) {
+    <div class="panel" [class.danger]="request.danger">
+      <span class="icon" aria-hidden="true">{{ request.danger ? '!' : '?' }}</span>
+
+      <h2 id="confirm-title">{{ request.title }}</h2>
+      <p id="confirm-message" class="message">{{ request.message }}</p>
+
+      <div class="buttons">
+        <!-- Le focus arrive sur « Annuler » : valider par Entrée ne détruit jamais rien. -->
+        <button type="button" class="btn-secondary" autofocus (click)="answer(false)">
+          {{ request.cancelLabel }}
+        </button>
+        <button
+          type="button"
+          class="confirm-btn"
+          [class.btn-primary]="!request.danger"
+          [class.btn-danger-solid]="request.danger"
+          (click)="answer(true)"
+        >
+          {{ request.confirmLabel }}
+        </button>
+      </div>
+    </div>
+  }
+</dialog>

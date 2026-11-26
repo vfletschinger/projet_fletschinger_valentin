@@ -3,8 +3,11 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { of } from 'rxjs';
+
 import { environment } from '../../../environments/environment';
 import { Pollution } from '../../models/pollution';
+import { Confirmation } from '../../services/confirmation';
 import { PollutionList } from './pollution-list';
 
 describe('PollutionList', () => {
@@ -116,7 +119,7 @@ describe('PollutionList', () => {
   });
 
   it('supprime une pollution après confirmation', async () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    vi.spyOn(TestBed.inject(Confirmation), 'ask').mockReturnValue(of(true));
 
     el.querySelector<HTMLButtonElement>('.item .btn-danger')!.click();
 
@@ -129,7 +132,7 @@ describe('PollutionList', () => {
   });
 
   it("ne supprime rien si l'utilisateur annule", () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    vi.spyOn(TestBed.inject(Confirmation), 'ask').mockReturnValue(of(false));
 
     el.querySelector<HTMLButtonElement>('.item .btn-danger')!.click();
 

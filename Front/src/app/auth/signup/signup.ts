@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SignupForm, User } from '../../models/user';
@@ -19,6 +20,7 @@ import { PasswordMatch } from '../../shared/password-match';
 })
 export class Signup {
   private readonly userApi = inject(UserApi);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected user: SignupForm = this.createEmptyUser();
 
@@ -58,19 +60,22 @@ export class Signup {
     this.submitting.set(true);
     this.serverError.set(null);
 
-    this.userApi.create({ login, password, lastName, firstName, email }).subscribe({
-      next: (created) => {
-        this.submitting.set(false);
-        this.registeredUser.set(created);
+    this.userApi
+      .create({ login, password, lastName, firstName, email })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (created) => {
+          this.submitting.set(false);
+          this.registeredUser.set(created);
 
-        this.user = this.createEmptyUser();
-        form.resetForm(this.user);
-      },
-      error: (error: Error) => {
-        this.submitting.set(false);
-        this.serverError.set(error.message);
-      },
-    });
+          this.user = this.createEmptyUser();
+          form.resetForm(this.user);
+        },
+        error: (error: Error) => {
+          this.submitting.set(false);
+          this.serverError.set(error.message);
+        },
+      });
   }
 
   protected restart(): void {
