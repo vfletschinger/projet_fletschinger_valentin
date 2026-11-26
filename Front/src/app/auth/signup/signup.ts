@@ -1,10 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { SignupForm, User } from '../models/user';
-import { UserApi } from '../services/user-api';
-import { PasswordMatch } from '../shared/password-match';
+import { SignupForm, User } from '../../models/user';
+import { UserApi } from '../../services/user-api';
+import { PasswordMatch } from '../../shared/password-match';
 
 @Component({
   selector: 'app-signup',
@@ -12,9 +13,14 @@ import { PasswordMatch } from '../shared/password-match';
   imports: [FormsModule, RouterLink, PasswordMatch, DatePipe],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
+  // Stratégie par défaut conservée volontairement : le modèle `user` est muté en place par
+  // `ngModel` et lu par un getter (`initials`) et par `validCount(form)`, dont le résultat change
+  // quand les contrôles s'enregistrent de façon asynchrone. OnPush risquerait d'afficher une carte
+  // membre ou une progression périmées, sans gain notable sur un écran aussi court.
 })
 export class Signup {
   private readonly userApi = inject(UserApi);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected user: SignupForm = this.createEmptyUser();
 
@@ -54,19 +60,22 @@ export class Signup {
     this.submitting.set(true);
     this.serverError.set(null);
 
-    this.userApi.create({ login, password, lastName, firstName, email }).subscribe({
-      next: (created) => {
-        this.submitting.set(false);
-        this.registeredUser.set(created);
+    this.userApi
+      .create({ login, password, lastName, firstName, email })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (created) => {
+          this.submitting.set(false);
+          this.registeredUser.set(created);
 
-        this.user = this.createEmptyUser();
-        form.resetForm(this.user);
-      },
-      error: (error: Error) => {
-        this.submitting.set(false);
-        this.serverError.set(error.message);
-      },
-    });
+          this.user = this.createEmptyUser();
+          form.resetForm(this.user);
+        },
+        error: (error: Error) => {
+          this.submitting.set(false);
+          this.serverError.set(error.message);
+        },
+      });
   }
 
   protected restart(): void {
